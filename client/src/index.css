@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*,*::before,*::after {
+    box-sizing: border-box;
+}
+
+.MuiDataGrid-row--borderBottom {
+    background-color: transparent !important;
+}
+
+/* For Chrome, Safari, Edge, and Opera */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* For Firefox */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* For Internet Explorer 10+ (Optional if supporting IE) */
+input[type="number"] {
+    -ms-appearance: textfield;
+}
+
+@layer utilities {
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 8px;
+      height: 6px;
+    }
+  
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #13487a; /* Thumb color */
+      border-radius: 8px;
+    }
+  
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #2d3748; /* Track color */
+    }
+  
+    .custom-scrollbar {
+      scrollbar-width: thin; /* For Firefox */
+      scrollbar-color: #204774 #18233f;
+    }
+  }
+  
+
+

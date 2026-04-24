@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE `sale` ADD COLUMN `bulkBuyerId` INTEGER NULL,
+    ADD COLUMN `paidAmount` DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    ADD COLUMN `paymentStatus` VARCHAR(191) NOT NULL DEFAULT 'UNPAID';
+
+-- AddForeignKey
+ALTER TABLE `Sale` ADD CONSTRAINT `Sale_bulkBuyerId_fkey` FOREIGN KEY (`bulkBuyerId`) REFERENCES `BulkBuyer`(`bulkBuyerId`) ON DELETE SET NULL ON UPDATE CASCADE;

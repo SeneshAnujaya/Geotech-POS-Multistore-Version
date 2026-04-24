@@ -1,0 +1,190 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  email     String  @unique
+  password  String
+  name      String
+  role      Role    @default(EMPLOYEE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Sales      Sale[]
+
+  storeId   String? @db.ObjectId
+  store     Store? @relation(fields: [storeId], references: [storeId], onDelete: SetNull)
+}
+
+enum Role {
+  ADMIN
+  EMPLOYEE
+}
+
+model Store {
+  storeId   String      @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  address   String?
+  contact   String?
+  createdAt DateTime @default(now())
+  isDeleted Boolean     @default(false) 
+  status     StoreStatus @default(ACTIVE) 
+
+  users     User[]
+  products  Product[]
+  sales     Sale[]
+  payments  Payment[]
+  Stock     Stock[]
+}
+
+enum StoreStatus {
+  ACTIVE
+  DISABLED
+}
+
+model Category {
+  categoryId String      @id @default(auto()) @map("_id") @db.ObjectId
+  name       String   @unique
+  categoryPic String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  products   Product[]
+}
+
+model Product {
+  productId   String       @id @default(auto()) @map("_id") @db.ObjectId
+  sku         String    //@unique
+  name        String
+  description String?
+  costPrice   Float   
+  retailPrice Float  
+  wholesalePrice Float? 
+  quantity    Int
+  brandName   String
+  categoryId  String @db.ObjectId
+  warrantyPeriod String
+  isDeleted     Boolean   @default(false)
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  category    Category  @relation(fields: [categoryId], references: [categoryId])
+  SalesItem   SalesItem[]
+
+  storeId     String? @db.ObjectId
+  store       Store? @relation(fields: [storeId], references: [storeId], onDelete: SetNull)
+  Stock           Stock[]
+}
+
+model Stock {
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  productId  String    @db.ObjectId
+  storeId    String    @db.ObjectId
+  quantity   Int       @default(0)
+  isDeleted  Boolean   @default(false)
+
+
+  createdAt  DateTime?  @default(now())
+  updatedAt  DateTime?  @updatedAt
+  
+  product    Product   @relation(fields: [productId], references: [productId])
+  store      Store     @relation(fields: [storeId], references: [storeId])
+
+  @@unique([productId, storeId])
+}
+
+
+
+model Sale {
+  saleId      String    @id @default(auto()) @map("_id") @db.ObjectId
+  invoiceNumber String  @default("TEMP-INV-DEFAULT")
+  userId      String? @db.ObjectId
+  totalAmount Float    
+  discount    Float  @default(0.00)
+  paidAmount Float  @default(0.00)
+  paymentStatus String @default("UNPAID")
+  saleStatus  String? @default("COMPLETED")
+  createdAt   DateTime   @default(now())
+  buyerName   String?  
+  phoneNumber String?
+  serviceCharge Float @default(0.00)
+  serviceDescription String?
+  cashierName  String?
+  returnSaleId String? @db.ObjectId
+  returnedItemsTotal Float? @default(0.0)
+
+   
+  user        User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  SalesItem   SalesItem[]
+
+  bulkBuyerId String? @db.ObjectId
+  bulkBuyer BulkBuyer? @relation(fields: [bulkBuyerId], references: [bulkBuyerId])
+
+   Payments       Payment[]
+
+   storeId     String? @db.ObjectId
+   store       Store? @relation(fields: [storeId], references: [storeId], onDelete: SetNull)
+}
+
+model SalesItem {
+  saleItemId  String    @id @default(auto()) @map("_id") @db.ObjectId
+  saleId      String @db.ObjectId
+  productId   String @db.ObjectId
+  quantity    Int
+  price       Float
+  warrantyPeriod String?   
+
+  sale        Sale       @relation(fields: [saleId], references: [saleId])
+  product     Product    @relation(fields: [productId], references: [productId])
+}
+
+model BulkBuyer {
+  bulkBuyerId   String      @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  phoneNumber   String
+  email         String?
+  companyName   String?
+  outstandingBalance Float  @default(0.00) // Track unpaid balance
+  createdAt     DateTime   @default(now())
+  type          String @default("BULK")
+  updatedAt     DateTime? @updatedAt
+
+  Sales Sale[]
+  Payments        Payment[] 
+}
+
+model Payment {
+  paymentId     String       @id @default(auto()) @map("_id") @db.ObjectId
+  saleId        String?    @db.ObjectId
+  bulkBuyerId   String?   @db.ObjectId
+  paymentAmount Float    
+  paymentDate   DateTime   @default(now())
+  paymentMethod String?   // (e.g., "cash", "credit card", "bank transfer")
+  receiptNumber String?       @unique
+  storeId       String?    @db.ObjectId 
+  
+  sale          Sale?       @relation(fields: [saleId], references: [saleId])
+  bulkBuyer     BulkBuyer? @relation(fields: [bulkBuyerId], references: [bulkBuyerId])
+  store         Store?       @relation(fields: [storeId], references: [storeId], onDelete: SetNull)
+  
+
+  @@index([saleId, paymentDate]) // Index for quick lookups of payments by sale and date
+}
+
+model SystemSettings {
+  id             String     @id @default(auto()) @map("_id") @db.ObjectId
+  isSetupComplete Boolean @default(false)
+}
