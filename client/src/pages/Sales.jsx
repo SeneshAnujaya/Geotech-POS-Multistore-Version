@@ -9,6 +9,7 @@ import {
   useCancelSaleRecordMutation,
   useFetchPaginatedSalesQuery,
   useFetchSalesQuery,
+  useFetchStoresQuery,
 } from "../redux/apiSlice";
 import { Box, CircularProgress, Skeleton } from "@mui/material";
 import { formatDateTime } from "../dateUtil";
@@ -19,6 +20,7 @@ import {
   showErrorToast,
   showSuccessToast,
 } from "../components/ToastNotification";
+import useCurrentStoreAdress from "../hooks/useCurrentStoreAdress";
 
 const Sales = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,8 +32,6 @@ const Sales = () => {
   const [selectedSaleItems, setSelectedSaleItems] = useState([]);
 
   const selectedStoreId = useSelector((state) => state.store.selectedStoreId);
- 
-  
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -53,6 +53,8 @@ const Sales = () => {
 
   const [cancelSale, { isLoading: isCanceling }] =
     useCancelSaleRecordMutation();
+
+   const currentStoreAddress = useCurrentStoreAdress();
 
   const [showLoader, setShowLoader] = useState(true);
   const { currentUser } = useSelector((state) => state.user);
@@ -231,7 +233,8 @@ const Sales = () => {
       invoiceNumber,
       serviceCharge,
       serviceDesc,
-      createdAt
+      createdAt,
+      currentStoreAddress
     );
   };
 

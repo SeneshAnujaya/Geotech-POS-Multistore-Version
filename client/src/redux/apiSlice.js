@@ -153,7 +153,7 @@ const apiSlice = createApi({
             invalidatesTags: ['WholesaleClients']
         }),
         deleteWholesaleClient: builder.mutation({
-            query: (id) => ({
+            query: ({id}) => ({
                 url: `/wholesaleClient/delete/${id}`,
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },

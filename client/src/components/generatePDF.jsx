@@ -20,7 +20,8 @@ const generatePDF = (
   invoiceNumber,
   serviceCharge,
   serviceDesc,
-  createdAt
+  createdAt,
+  currentStoreAddress = ""
 ) => {
 
   
@@ -78,7 +79,8 @@ const generatePDF = (
                 alignment: "left",
               },
               {
-                text: "No11, New Shopping Complex, Wanduramba Galle. Tel: 074 1411556",
+                // text: "No11, New Shopping Complex, Wanduramba Galle. Tel: 074 1411556",
+                text: currentStoreAddress || "N/A",
                 style: "subheader",
                 alignment: "left",
               },
