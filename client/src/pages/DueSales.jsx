@@ -10,6 +10,7 @@ import { Box, CircularProgress, Skeleton } from "@mui/material";
 import { formatDateTime } from "../dateUtil";
 import SearchBar from "../components/SearchBar";
 import { useSelector } from "react-redux";
+import useCurrentStoreAdress from "../hooks/useCurrentStoreAdress";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -32,6 +33,9 @@ const DueSales = () => {
 
 
   const [showLoader, setShowLoader] = useState(true);
+ 
+  // Get Store Address
+    const currentStoreAddress = useCurrentStoreAdress();
 
   useEffect(() => {
     const loaderTimer = setTimeout(() => {
@@ -164,7 +168,8 @@ const DueSales = () => {
       invoiceNumber,
       serviceCharge,
       serviceDesc,
-      createdAt
+      createdAt,
+      currentStoreAddress
     );
   };
 

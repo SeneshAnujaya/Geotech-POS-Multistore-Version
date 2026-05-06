@@ -47,6 +47,7 @@ import {
 } from "../redux/apiSlice";
 import Pagination from "../components/Pagination";
 import PlaceholderImage from "../assets/place-holder-img.jpeg";
+import useCurrentStoreAdress from "../hooks/useCurrentStoreAdress";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -125,6 +126,9 @@ const Orders = () => {
 
   const currentUserName = currentUser.rest.name;
   const currentUserId = currentUser.rest.id;
+
+  // Get Store Address
+  const currentStoreAddress = useCurrentStoreAdress();
 
   const dispatch = useDispatch();
 
@@ -325,7 +329,9 @@ const Orders = () => {
           paidAmount,
           invoiceNumber,
           serviceCharge,
-          serviceDesc
+          serviceDesc,
+          "",
+          currentStoreAddress
         );
 
         refetchSales();

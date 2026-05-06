@@ -72,7 +72,7 @@ model Product {
   costPrice   Float   
   retailPrice Float  
   wholesalePrice Float? 
-  quantity    Int
+  quantity    Int?
   brandName   String
   categoryId  String @db.ObjectId
   warrantyPeriod String
