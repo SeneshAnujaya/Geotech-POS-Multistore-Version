@@ -22,6 +22,7 @@ import generatePDF from "../components/generatePDF";
 import DuePayModal from "../components/DuePayModal";
 import axios from "axios";
 import payReceiptPDF from "../components/payReceiptPDF";
+import useCurrentStoreAdress from "../hooks/useCurrentStoreAdress";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -34,6 +35,9 @@ const MoreClientInfo = () => {
   const { currentUser } = useSelector((state) => state.user);
   // get selected storeID
   const selectedStoreId = useSelector((state) => state.store.selectedStoreId);
+
+  // Get Current Store Address
+  const currentStoreAddress = useCurrentStoreAdress();
  
 
   const {
@@ -43,7 +47,7 @@ const MoreClientInfo = () => {
     refetch: refetchWholesaleClients,
   } = useFetchWholesaleClientsQuery({});
 
-  const { data: clientSales = { data: [] }, isError } = useFetchSalesQuery();
+  const { data: clientSales = { data: [] }, isError } = useFetchSalesQuery({ storeId: selectedStoreId });
 
   const [showLoader, setShowLoader] = useState(true);
   const [activeTab, setActiveTab] = useState("PAYMENT");
@@ -259,7 +263,8 @@ const MoreClientInfo = () => {
       invoiceNumber,
       serviceCharge,
       serviceDesc,
-      createdAt
+      createdAt,
+      currentStoreAddress
     );
   };
 
