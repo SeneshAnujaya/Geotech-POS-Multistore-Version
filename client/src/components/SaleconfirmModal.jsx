@@ -194,7 +194,7 @@ const SaleconfirmModal = ({
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 bg-gray-950 bg-opacity-40 overflow-y-auto h-full w-full z-20">
-      <div className="relative top-20 mx-auto p-7 border border-slate-600  max-w-md  shadow-lg rounded-md  bg-[#121f4b]">
+      <div className="relative top-20 mx-auto p-7 border border-slate-600  max-w-md  shadow-lg rounded-md  bg-[#121f4b] bg-slate-900">
         <h1 className="text-[1.3rem] font-semibold text-slate-300">
           {!isBulkBuyer ? "Regular" : "Wholesale"} Bill Information
         </h1>
@@ -202,14 +202,14 @@ const SaleconfirmModal = ({
         <form onSubmit={handleSubmit} className="mt-5">
           <label
             htmlFor="pay-method"
-            className="block text-sm font-medium text-gray-300 mb-1"
+            className="block text-[0.9rem] font-base text-gray-300 mb-1"
           >
             Select Payment Method
           </label>
           {/* payment switch */}
           <div className="mt-4 mb-6 flex gap-5 items-center w-full">
             <label
-              className={`text-slate-300 items-center gap-2 flex text-[0.85rem] font-medium border py-2 px-3 rounded-md   border-slate-500 cursor-pointer ${
+              className={`text-slate-300 items-center gap-2 flex text-[0.85rem] font-medium border py-2 px-3 rounded-md   border-slate-600 cursor-pointer ${
                 !isCredit ? "bg-blue-600 !border-blue-800" : "bg-transparent"
               }`}
             >
@@ -224,7 +224,7 @@ const SaleconfirmModal = ({
               />
             </label>
             <label
-              className={`text-slate-300 items-center gap-2 flex text-[0.85rem] font-medium  border py-2 px-3 rounded-md border-slate-500 cursor-pointer ${
+              className={`text-slate-300 items-center gap-2 flex text-[0.85rem] font-medium  border py-2 px-3 rounded-md border-slate-600 cursor-pointer ${
                 isCredit ? "bg-blue-800 !border-blue-800" : "bg-transparent"
               }`}
             >
@@ -244,7 +244,7 @@ const SaleconfirmModal = ({
           <>
             <label
               htmlFor="wholesaleClient"
-              className="block text-sm font-medium text-gray-300 mb-1"
+              className="block text-sm font-base text-gray-300 mb-2"
             >
               Select Registered Customer
             </label>
@@ -275,7 +275,7 @@ const SaleconfirmModal = ({
 
           <label
             htmlFor="name"
-            className="block text-sm font-medium text-gray-300 mb-1 mt-2"
+            className="block text-sm font-base text-gray-300 mb-1 mt-2"
           >
             Customer Name
           </label>

@@ -164,7 +164,7 @@ const Stores = () => {
 
   return (
     <MainLayout>
-      <div className="px-4 md:px-8 py-8 flex flex-col border-slate-700 rounded-md border">
+      <div className="px-4 md:px-8 py-8 flex flex-col border-slate-800 bg-slate-900 rounded-md border">
         {/* Header bar */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-xl sm:text-2xl font-semibold">Manage Stores</h1>
@@ -184,7 +184,7 @@ const Stores = () => {
         ) : (
           <>
             <div>
-              <div className="w-full max-w-fit mt-8 h-[680px]">
+              <div className="w-full max-w-fit mt-8 h-[680px] bg-darkBlue">
                 <Suspense fallback={<CircularProgress color="primary" />}>
                   <DataTable
                     rows={rows}

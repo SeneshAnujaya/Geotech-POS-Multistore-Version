@@ -390,7 +390,7 @@ const Category = () => {
       {isLoading ? (
         <div className="py-4 px-4">Loading...</div>
       ) : (
-        <div className="px-4 md:px-8 py-5 flex flex-col border border-slate-700 rounded-md">
+        <div className="px-4 md:px-8 py-7 flex flex-col border border-slate-800 rounded-md bg-slate-900">
           {/* Header bar */}
           <div className="flex justify-between items-center mb-2 pb-6 flex-wrap gap-4">
             <h1 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-0">
@@ -417,10 +417,10 @@ const Category = () => {
           {showLoader || isLoading ? (
             renderTableSkeleton()
           ) : (
-            <div className="border-0 sm:border border-slate-700 rounded-md px-0 sm:px-4">
+            <div className="border-0 sm:border border-slate-800 rounded-md px-0 sm:px-0 bg-slate-900">
               <div
                 style={{ width: "100%", maxWidth: "fit-content" }}
-                className="mt-8 h-[680px]"
+                className="mt-0 h-[680px]"
               >
                 <Suspense fallback={<CircularProgress color="primary" />}>
                   <DataGrid
@@ -436,12 +436,13 @@ const Category = () => {
                       // Optionally, show an error toast notification
                       showErrorToast("Failed to update row.");
                     }}
-                    className="rounded-lg border !border-gray-400 !text-gray-200"
+                    className="rounded-lg border !border-gray-700 bg-darkBlue !text-gray-200"
                     sx={{
                       // Style for column headers
                       "& .MuiDataGrid-columnHeaders": {
-                        backgroundColor: "#0f172a", // Background color for header
+                        // backgroundColor: "#0f172a", // Background color for header
                         color: "#fff", // Text color for header
+                        backgroundColor: "#0f172a"
                       },
                       // Style for virtual scroller (rows area)
                       "& .MuiDataGrid-virtualScroller": {

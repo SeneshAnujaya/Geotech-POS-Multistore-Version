@@ -8,7 +8,7 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm }) => {
 
   return (
     <div className="fixed inset-0 bg-gray-950 bg-opacity-70 overflow-y-auto h-full w-full z-20 ">
-      <div className="relative top-80 mx-auto p-6 border border-slate-600 w-96 shadow-lg rounded-md bg-blue-950">
+      <div className="relative top-80 mx-auto p-6 border border-slate-800 w-96 shadow-lg rounded-md bg-slate-950">
         <div className="flex items-center gap-3">
           <span className="border block w-fit p-2.5 border-slate-700 rounded-full  bg-blue-900 h-fit">
             <Trash2Icon className="w-6 h-6 text-blue-200" />

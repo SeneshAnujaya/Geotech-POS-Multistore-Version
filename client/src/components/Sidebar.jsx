@@ -38,7 +38,7 @@ const SidebarLink = ({ href, icon: Icon, label, isCollapsed }) => {
       <div
         className={`cursor-pointer flex items-center ${
           isCollapsed ? "justify-center py-4" : "justify-start px-8 py-4"
-        } hover:text-blue-500 hover:bg-blue-100 gap-3 transition-colors ${
+        } hover:text-blue-500 hover:bg-blue-900/40 gap-3 transition-colors ${
           isActive ? "bg-blue-900 text-white" : "text-white"
         }`}
       >
@@ -87,7 +87,7 @@ const Sidebar = () => {
 
   const sidebarClassNames = `fixed flex flex-col ${
     isSidebarCollapsed ? "w-0 md:w-16" : "w-72 md:64"
-  } bg-slate-900 transition-all duration-300 overflow-hidden h-full shadow-md z-40 border-r border-slate-700`;
+  } bg-darkBlue transition-all duration-300 overflow-hidden h-full shadow-md z-40 border-r border-slate-700`;
 
   return (
     <div className={sidebarClassNames}>
@@ -188,7 +188,7 @@ const Sidebar = () => {
             isSidebarCollapsed
               ? "justify-center py-4"
               : "justify-start px-8 py-4"
-          } hover:text-blue-500 hover:bg-blue-100 gap-3 transition-colors`}
+          } hover:text-blue-500 hover:bg-blue-900/40 gap-3 transition-colors`}
           onClick={() => setIsModalOpen(true)}
         >
           <LogOut className={`w-6 h-6 text-sky-300`} />

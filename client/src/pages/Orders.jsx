@@ -358,16 +358,16 @@ const Orders = () => {
     <MainLayout>
       <div className="px-0 md:px-8 py-4 flex flex-col xl:flex-row gap-4 rounded-md">
         {/* Menu items side */}
-        <div className="w-full xl:h-3/4 border border-slate-700 rounded-md bg-slate-900 p-4 min-h-[780px]">
+        <div className="w-full xl:h-3/4 border border-slate-800 rounded-md bg-slate-900 p-4 min-h-[780px]">
           <div className="flex justify-between py-2 gap-4 flex-wrap">
             <div className=" items-center mb-6">
-              <h1 className="text-xl md:text-3xl font-semibold">Orders</h1>
+              <h1 className="text-xl md:text-3xl font-medium">Orders</h1>
             </div>
             <div className="price-switch flex items-center justify-start gap-4 sm:gap-6 flex-wrap">
               {/* price switch */}
               <div className="mt-2.5 mb-3 flex gap-4 items-center">
                 <label
-                  className={`text-slate-300 text-[0.8rem] border py-1 px-2 rounded-full border-slate-500 cursor-pointer ${!isBulkBuyer
+                  className={`text-slate-300 text-[0.8rem] border py-1 px-2 rounded-full border-slate-600 cursor-pointer ${!isBulkBuyer
                       ? "bg-blue-800 !border-blue-800"
                       : "bg-transparent"
                     }`}
@@ -382,7 +382,7 @@ const Orders = () => {
                   Regular
                 </label>
                 <label
-                  className={`text-slate-300 text-[0.8rem] border py-1 px-2 rounded-full border-slate-500 cursor-pointer ${isBulkBuyer
+                  className={`text-slate-300 text-[0.8rem] border py-1 px-2 rounded-full border-slate-600 cursor-pointer ${isBulkBuyer
                       ? "bg-blue-800 !border-blue-800"
                       : "bg-transparent"
                     }`}
@@ -402,7 +402,7 @@ const Orders = () => {
                 <input
                   type="search"
                   placeholder="Search via SKU Name Brand."
-                  className="w-full pl-10 pr-4 py-2 w-50 md:w-80 border border-slate-600 bg-slate-800 rounded-lg focus:outline-none focus:border-blue-500 "
+                  className="w-full pl-10 pr-4 py-2 w-50 md:w-80 border border-slate-800 bg-darkBlue rounded-lg focus:outline-none focus:border-blue-500 text-[0.95rem]"
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
                     setPage(0);
@@ -439,10 +439,10 @@ const Orders = () => {
                 categories.data.map((category) => (
                   <div
                     key={category.categoryId}
-                    className={`leading-none   py-2 px-3 rounded-full  text-[0.93rem] hover:cursor-pointer ${selectedCategory &&
+                    className={`leading-none   py-2 px-3 rounded-full  text-[0.91rem] hover:cursor-pointer ${selectedCategory &&
                         selectedCategory.categoryId === category.categoryId
                         ? "bg-blue-600"
-                        : "bg-slate-900 border-slate-600 border"
+                        : "bg-darkBlue border-slate-700 border"
                       }`}
                     onClick={() => {
                       setSelectedCategory(category);
@@ -463,7 +463,7 @@ const Orders = () => {
                 productList.map((product) => (
                   <div
                     key={product.sku}
-                    className="border bg-slate-900 border-slate-700 rounded-md p-4 w-full max-w-56 flex flex-col justify-between h-[310px]"
+                    className="border bg-darkBlue border-slate-700 rounded-md p-4 w-full max-w-56 flex flex-col justify-between h-[310px]"
                   >
                     <img
                       src={
@@ -570,9 +570,9 @@ const Orders = () => {
           </div>
         </div>
         {/* cart side */}
-        <div className="w-full xl:w-1/4 border border-slate-700 rounded-md bg-slate-900 p-4 flex flex-col justify-between">
+        <div className="w-full xl:w-1/4 border border-slate-800 rounded-md bg-slate-900 p-4 flex flex-col justify-between">
           <div>
-            <h4 className="font-medium text-lg ">Order Detail</h4>
+            <h4 className="font-medium text-lg">Order Detail</h4>
             {/*Cart items container*/}
             <div className="mt-2 flex justify-between items-center flex-wrap">
               <p className="text-[0.95rem] text-slate-300">
@@ -592,7 +592,7 @@ const Orders = () => {
             <div className="h-[500px] overflow-auto mt-3 custom-scrollbar">
               {cartItems.map((item) => (
                 <div
-                  className="border mt-4 border-slate-700 rounded-md bg-slate-900 py-2 px-1.5 w-full"
+                  className="border mt-2 border-slate-800 rounded-md bg-darkBlue py-2 px-1.5 w-full"
                   key={item.sku}
                 >
                   <div className="flex items-center gap-2 w-full">
@@ -699,7 +699,7 @@ const Orders = () => {
             </div>
           </div>
           {/* Payement summary */}
-          <div className="border mt-4  border-slate-700 rounded-md bg-slate-900 p-4">
+          <div className="border mt-4  border-slate-800 rounded-md bg-darkBlue p-4">
             <p className="text-[0.95rem] text-slate-200 font-semibold">
               Payment Summary
             </p>

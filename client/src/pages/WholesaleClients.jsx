@@ -192,7 +192,7 @@ const WholesaleClients = () => {
 
   return (
     <MainLayout>
-      <div className="px-4 md:px-8 py-4 flex flex-col border-slate-700 rounded-md border min-h-[800px]">
+      <div className="px-4 md:px-7 py-7 flex flex-col border-slate-800 rounded-md border min-h-[800px] bg-slate-900">
         {/* Header bar */}
         <div className="flex justify-between items-center mb-6 gap-4 flex-wrap">
           <h1 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-0">Registered Clients</h1>
@@ -249,7 +249,7 @@ const WholesaleClients = () => {
                     } `}
                   >
                     <div>
-                      <div className="w-full max-w-fit mt-8 h-[680px]">
+                      <div className="w-full max-w-fit mt-8 h-[680px] bg-darkBlue">
                         <Suspense
                           fallback={<CircularProgress color="primary" />}
                         >
@@ -274,7 +274,7 @@ const WholesaleClients = () => {
                     }`}
                   >
                     <div>
-                      <div className="w-full max-w-fit mt-8 h-[680px]">
+                      <div className="w-full max-w-fit mt-8 h-[680px] bg-darkBlue">
                         <Suspense
                           fallback={<CircularProgress color="primary" />}
                         >

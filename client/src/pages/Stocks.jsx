@@ -204,7 +204,7 @@ const Stocks = () => {
   }
   return (
     <MainLayout>
-      <div className="px-4 md:px-8 py-4 flex flex-col border-slate-700 border rounded-md">
+      <div className="px-4 md:px-7 py-7 flex flex-col border-slate-800 border rounded-md bg-slate-900">
         {/* Header bar */}
         <div className="flex justify-between items-center mb-6 flex-wrap">
           <h1 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-0">
@@ -235,7 +235,7 @@ const Stocks = () => {
           <div className="w-full">
             <div
               style={{ width: "100%", maxWidth: "100%" }}
-              className="mt-8 h-[680px]"
+              className="mt-8 h-[680px] bg-darkBlue"
             >
               <Suspense fallback={<CircularProgress color="primary" />}>
                 <DataTable

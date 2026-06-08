@@ -46,6 +46,9 @@ input[type="number"] {
       scrollbar-width: thin; /* For Firefox */
       scrollbar-color: #204774 #18233f;
     }
+    .darkBlue {
+      background-color: #080f21;
+    }
   }
   
 

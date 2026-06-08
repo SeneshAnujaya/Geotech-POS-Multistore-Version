@@ -3,7 +3,7 @@ import React from "react";
 
 const IconCard = ({ icon, amount, title, loading }) => {
   return (
-    <div className="border-slate-700 rounded-md border p-6 flex items-center gap-4 w-full lg:!w-[350px] sm:flex-1">
+    <div className="border-slate-800 rounded-md border p-6 flex items-center gap-4 w-full lg:!w-[350px] sm:flex-1 bg-slate-900">
       <span className="border block w-fit p-2 border-slate-700 rounded-full bg-slate-800 h-fit">
         {icon}
       </span>

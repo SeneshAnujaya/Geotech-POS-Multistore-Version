@@ -223,7 +223,7 @@ const Products = () => {
   }
   return (
     <MainLayout>
-      <div className="px-4 md:px-8 py-4 flex flex-col border-slate-700 border rounded-md">
+      <div className="px-4 md:px-8 py-7 flex flex-col border-slate-800 bg-slate-900 border rounded-md">
         {/* Header bar */}
         <div className="flex justify-between items-center mb-6 flex-wrap">
           <h1 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-0">
@@ -254,7 +254,7 @@ const Products = () => {
           <div className="w-full">
             <div
               style={{ width: "100%", maxWidth: "fit-content" }}
-              className="mt-8 h-[680px]"
+              className="mt-8 h-[680px] bg-darkBlue"
             >
               <Suspense fallback={<CircularProgress color="primary" />}>
                 <DataTable

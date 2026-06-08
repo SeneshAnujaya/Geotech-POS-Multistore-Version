@@ -305,7 +305,7 @@ const Sales = () => {
   }
   return (
     <MainLayout>
-      <div className="px-4 md:px-8 py-4 flex flex-col border-slate-700 border rounded-md">
+      <div className="px-4 md:px-7 py-7 flex flex-col border-slate-800 border rounded-md bg-slate-900">
         {/* Header bar */}
         <div className="flex justify-between items-center mb-6 mt-2 flex-wrap gap-4">
           <h1 className="text-xl sm:text-2xl font-semibold">Sale Records</h1>
@@ -332,7 +332,7 @@ const Sales = () => {
                 <DataGrid
                   rows={rows}
                   columns={columns}
-                  className="text-white! rounded-lg border !border-gray-400 !text-gray-200"
+                  className="text-white! rounded-lg border !border-gray-700 !text-gray-200 bg-darkBlue"
                   sx={{
                     // Style for column headers
                     "& .MuiDataGrid-columnHeaders": {
