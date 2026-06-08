@@ -26,6 +26,7 @@ model User {
 
   storeId   String? @db.ObjectId
   store     Store? @relation(fields: [storeId], references: [storeId], onDelete: SetNull)
+  RepairJobs RepairJob[]
 }
 
 enum Role {
@@ -47,6 +48,7 @@ model Store {
   sales     Sale[]
   payments  Payment[]
   Stock     Stock[]
+  RepairJobs RepairJob[]
 }
 
 enum StoreStatus {
@@ -182,6 +184,48 @@ model Payment {
   
 
   @@index([saleId, paymentDate]) // Index for quick lookups of payments by sale and date
+}
+
+enum RepairStatus {
+  RECEIVED
+  DIAGNOSING
+  REPAIRING
+  READY
+  COMPLETED
+  CANCELLED
+}
+
+model RepairJob {
+  repairJobId        String   @id @default(auto()) @map("_id") @db.ObjectId
+
+  jobNumber          String   @unique
+
+  customerName       String
+  customerPhone      String
+
+  deviceType         String
+  brand              String
+  model              String
+  serialNumber       String?
+
+  problemDescription String
+  diagnosis          String?
+
+  labourCost         Float    @default(0)
+  partsCost          Float    @default(0)
+  totalCost          Float    @default(0)
+
+  status             RepairStatus @default(RECEIVED)
+
+  assignedUserId     String?  @db.ObjectId
+  assignedUser       User? @relation(fields: [assignedUserId], references: [id])
+
+  storeId            String? @db.ObjectId
+  store              Store? @relation(fields: [storeId], references: [storeId])
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  completedAt        DateTime?
 }
 
 model SystemSettings {

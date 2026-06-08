@@ -13,6 +13,7 @@ import {
   StoreIcon,
   UserCircle,
   Users,
+  Wrench,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsSidebarCollapsed } from "../redux/uiSetting/uiSettingsSlice";
@@ -162,6 +163,13 @@ const Sidebar = () => {
           label="Return & Cancel"
           isCollapsed={isSidebarCollapsed}
         />
+        <SidebarLink
+          href="/repairJobs"
+          icon={Wrench}
+          label="Repair Jobs"
+          isCollapsed={isSidebarCollapsed}
+        />
+        
         <SidebarLink
           href="/Wholesales"
           icon={Users}

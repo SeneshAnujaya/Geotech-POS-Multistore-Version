@@ -28,6 +28,7 @@ import ReturnCancelSales from "./pages/ReturnCancelSales";
 import UserProfile from "./pages/UserProfile";
 import Stores from "./pages/Stores";
 import Stocks from "./pages/Stocks";
+import RepairJobs from "./pages/RepairJobs";
 // import { useCheckSetupStatusQuery } from './redux/apiSlice';
 
 const theme = createTheme({
@@ -73,6 +74,7 @@ const App = () => {
             <Route path="/moreclientinfo/:id" element={<MoreClientInfo />} />
             <Route path="/profile" element={<UserProfile />}/>
             <Route path="/stocks" element={<Stocks />}/>
+            <Route path="/repairJobs" element={<RepairJobs/>}/>
             <Route path="/stores" element={role == 'ADMIN' ? <Stores /> : <Navigate to="/sign-in" />}/>
           </Route>
           <Route path="*" element={<Navigate to="/sign-in" />} />
