@@ -17,6 +17,7 @@ import { CircularProgress, Box, Skeleton } from "@mui/material";
 import { formatDateTime } from "../dateUtil";
 import SearchBar from "../components/SearchBar";
 import StockAddModal from "../components/StockAddModal";
+import RepairAddModal from "../components/RepairAddModal";
 
 const DataTable = lazy(() => import("../components/DataTable"));
 
@@ -253,7 +254,7 @@ const RepairJobs = () => {
               </Suspense>
             </div>
             {/* MODAL */}         
-            <StockAddModal isOpen={isStockModalOpen}
+            <RepairAddModal isOpen={isStockModalOpen}
               onClose={() => setIsStockModalOpen(false)}
               onCreate={handleCreateStock} />
           </div>
