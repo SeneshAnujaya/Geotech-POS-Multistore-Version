@@ -13,7 +13,7 @@ const StoreSelect = ({value, onChange}) => {
     <div>
       <label
         htmlFor="storeId"
-        className="block text-sm font-medium text-gray-300"
+        className="block text-[0.8rem] font-light text-gray-300 mb-1"
       >
         Select Store
       </label>

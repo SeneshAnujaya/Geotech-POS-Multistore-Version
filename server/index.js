@@ -15,6 +15,7 @@ import paymentRouter from './routes/paymentRoute.js';
 import initialSetupRouter from './routes/initialsetupRoute.js';
 import storeRouter from './routes/storeRoute.js';
 import stockRouter from './routes/stockRoute .js';
+import repairRouter from './routes/repairRoute.js';
 
 dotenv.config();
 
@@ -44,6 +45,7 @@ app.use("/api/payment", paymentRouter);
 app.use("/api/initialsetup", initialSetupRouter);
 app.use("/api/stores", storeRouter);
 app.use("/api/stocks", stockRouter);
+app.use("/api/repair", repairRouter);
 
 app.get('/', (req, res) => {
     res.send('API is working');

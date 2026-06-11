@@ -12,6 +12,7 @@ import {
   useUpdateStockMutation,
   useDeleteStockMutation,
   useFetchPaginatedProductsQuery,
+  useCreateRepairjobMutation,
 } from "../redux/apiSlice";
 import { CircularProgress, Box, Skeleton } from "@mui/material";
 import { formatDateTime } from "../dateUtil";
@@ -54,7 +55,8 @@ const RepairJobs = () => {
     refetch();
   }, [paginationModel, refetch]);
 
-  const [createStock, { isLoading: isStockCreating }] = useCreateStockMutation();
+  // const [createStock, { isLoading: isStockCreating }] = useCreateStockMutation();
+  const [createRepairjob, {isLoading: isRepairjobLoading}] = useCreateRepairjobMutation();
   const [deleteStock, { isLoading: isDeletingStock }] = useDeleteStockMutation();
   const [updateStock, { isLoading: isUpdating }] = useUpdateStockMutation();
 
@@ -152,19 +154,24 @@ const RepairJobs = () => {
     },
   ];
 
-  const handleCreateStock = async (formData) => {
+  const handleCreateRepairjob = async (formData) => {
+
+    console.log(formData);
+    
 
     try {
-      const response = await createStock(formData).unwrap();
+      const response = await createRepairjob(formData).unwrap();
 
       if (!response.success) {
         showErrorToast(data.message || "Error occurred");
         return;
       }
-      showSuccessToast("Stock is created successfully!");
-      refetch();
-      refetchPaginatedProducts();
+      showSuccessToast("Repairjob is created successfully!");
+      // refetch();
+      // refetchPaginatedProducts();
     } catch (error) {
+      console.log(error);
+      
       if (error.data) {
         console.log(error.data.message);
 
@@ -199,7 +206,7 @@ const RepairJobs = () => {
   if (isStockError || !stocks) {
     return (
       <MainLayout>
-        <div className=" text-red-700 py-4 px-4">Failed to get Stocks</div>
+        <div className=" text-red-700 py-4 px-4">Failed to get Repairjobs</div>
       </MainLayout>
     );
   }
@@ -256,7 +263,7 @@ const RepairJobs = () => {
             {/* MODAL */}         
             <RepairAddModal isOpen={isStockModalOpen}
               onClose={() => setIsStockModalOpen(false)}
-              onCreate={handleCreateStock} />
+              onCreate={handleCreateRepairjob} />
           </div>
         )}
       </div>

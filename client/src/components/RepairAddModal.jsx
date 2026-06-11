@@ -1,6 +1,7 @@
 import { useState } from "react";
 import StoreSelect from "./StoreSelect";
 import { showErrorToast } from "./ToastNotification";
+import {Save, X} from 'lucide-react'
 
 const RepairAddModal = ({
   isOpen,
@@ -16,6 +17,7 @@ const RepairAddModal = ({
     brand: "",
     model: "",
     serialNumber: "",
+    technician:"",
 
     problemDescription: "",
 
@@ -41,6 +43,7 @@ const RepairAddModal = ({
       brand: "",
       model: "",
       serialNumber: "",
+      technician:"",
 
       problemDescription: "",
 
@@ -65,11 +68,14 @@ const RepairAddModal = ({
 
     onCreate(formData);
 
-    resetForm();
-    onClose();
+    // resetForm();
+    // onClose();
   };
 
   if (!isOpen) return null;
+
+  const labelStyle = "block text-[0.8rem] font-light text-slate-200 mb-1";
+  const inputStyle = "w-full p-2 rounded border border-slate-800 text-white bg-slate-900 font-light focus:border-blue-400 focus:outline-none focus:ring-0 placeholder:text-sm";
 
   return (
     <div className="fixed inset-0 bg-black/70 overflow-y-auto z-50">
@@ -83,7 +89,7 @@ const RepairAddModal = ({
 
             {/* Customer Name */}
             <div>
-              <label className="block text-sm font-light text-slate-300 mb-1">
+              <label className={labelStyle}>
                 Customer Name *
               </label>
               <input
@@ -92,14 +98,14 @@ const RepairAddModal = ({
                 value={formData.customerName}
                 onChange={handleInputChange}
                 placeholder="Customer Name"
-                className="w-full p-2 rounded border !border-slate-800 text-white-200 bg-slate-900 font-light focus:border-blue-600"
+                className={inputStyle}
                 required
               />
             </div>
 
             {/* Customer Phone */}
             <div>
-              <label className="block text-sm font-light text-slate-300 mb-1">
+              <label className={labelStyle}>
                 Customer Phone *
               </label>
               <input
@@ -107,15 +113,15 @@ const RepairAddModal = ({
                 name="customerPhone"
                 value={formData.customerPhone}
                 onChange={handleInputChange}
-                placeholder="0771234567"
-                className="w-full p-2 rounded border border-slate-600 bg-gray-800 font-light text-white-200"
+                placeholder="Phone Number"
+                className={inputStyle}
                 required
               />
             </div>
 
             {/* Device Type */}
             <div>
-              <label className="block text-sm font-light text-slate-300 mb-1">
+              <label className={labelStyle}>
                 Device Type *
               </label>
 
@@ -123,7 +129,7 @@ const RepairAddModal = ({
                 name="deviceType"
                 value={formData.deviceType}
                 onChange={handleInputChange}
-                className="w-full p-2 rounded border border-slate-600 bg-gray-800 font-light text-white-200"
+                className={inputStyle}
                 required
               >
                 <option value="">Select Device Type</option>
@@ -139,7 +145,7 @@ const RepairAddModal = ({
 
             {/* Brand */}
             <div>
-              <label className="block text-sm font-light text-slate-300 mb-1">
+              <label className={labelStyle}>
                 Brand
               </label>
 
@@ -148,14 +154,14 @@ const RepairAddModal = ({
                 name="brand"
                 value={formData.brand}
                 onChange={handleInputChange}
-                placeholder="Dell"
-                className="w-full p-2 rounded border border-slate-600 bg-gray-800 text-gray-900"
+                placeholder="Brand"
+                 className={inputStyle}
               />
             </div>
 
             {/* Model */}
             <div>
-              <label className="block text-sm font-light text-slate-300 mb-1">
+              <label className={labelStyle}>
                 Model
               </label>
 
@@ -164,14 +170,14 @@ const RepairAddModal = ({
                 name="model"
                 value={formData.model}
                 onChange={handleInputChange}
-                placeholder="Inspiron 15"
-                className="w-full p-2 rounded border border-slate-600 bg-gray-800 text-gray-900"
+                placeholder="Model"
+                 className={inputStyle}
               />
             </div>
 
             {/* Serial Number */}
             <div>
-              <label className="block text-sm font-light text-slate-300 mb-1">
+              <label className={labelStyle}>
                 Serial Number
               </label>
 
@@ -180,16 +186,16 @@ const RepairAddModal = ({
                 name="serialNumber"
                 value={formData.serialNumber}
                 onChange={handleInputChange}
-                placeholder="ABC123XYZ"
-                className="w-full p-2 rounded border border-slate-600 bg-gray-800 text-gray-900"
+                placeholder="Serial Number"
+                 className={inputStyle}
               />
             </div>
 
             {/* Store */}
             <div>
-              <label className="block text-sm font-light text-slate-300 mb-1">
+              {/* <label className={labelStyle}>
                 Store *
-              </label>
+              </label> */}
 
               <StoreSelect
                 value={formData.storeId}
@@ -204,30 +210,24 @@ const RepairAddModal = ({
 
             {/* Technician */}
             <div>
-              <label className="block text-sm font-light bg-gray-800 text-slate-300 mb-1">
-                Assign Technician
+              <label className={labelStyle}>
+                Technician
               </label>
 
-              <select
-                name="assignedUserId"
-                value={formData.assignedUserId}
+              <input
+                type="text"
+                name="technician"
+                value={formData.technician}
                 onChange={handleInputChange}
-                className="w-full p-2 rounded border border-slate-600 text-gray-900"
-              >
-                <option value="">Select Technician</option>
-
-                {technicians.map((user) => (
-                  <option key={user.id} value={user.id}>
-                    {user.name}
-                  </option>
-                ))}
-              </select>
+                placeholder="Technician"
+                 className={inputStyle}
+              />
             </div>
           </div>
 
           {/* Problem Description */}
           <div className="mt-4">
-            <label className="block text-sm font-light text-slate-300 mb-1">
+            <label className={labelStyle}>
               Problem Description *
             </label>
 
@@ -237,31 +237,33 @@ const RepairAddModal = ({
               onChange={handleInputChange}
               rows={5}
               placeholder="Describe the issue..."
-              className="w-full p-2 rounded border border-slate-600 bg-gray-800 text-gray-900"
+              className={inputStyle}
               required
             />
           </div>
 
           {/* Buttons */}
           <div className="flex justify-end gap-3 mt-6">
-            <button
-              type="button"
-              onClick={() => {
-                resetForm();
-                onClose();
-              }}
-              className="px-4 py-2 bg-red-700 text-white rounded hover:bg-red-800"
-            >
-              Cancel
-            </button>
+  <button
+    type="button"
+    onClick={() => {
+      resetForm();
+      onClose();
+    }}
+    className="flex items-center gap-2 px-4 py-2 bg-red-700 text-white text-sm font-medium rounded-md hover:bg-red-800 transition-colors duration-200"
+  >
+    <X size={18} />
+    Cancel
+  </button>
 
-            <button
-              type="submit"
-              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-            >
-              Create Repair Job
-            </button>
-          </div>
+  <button
+    type="submit"
+    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors duration-200"
+  >
+    <Save size={18} />
+    Create Repair Job
+  </button>
+</div>
         </form>
       </div>
     </div>

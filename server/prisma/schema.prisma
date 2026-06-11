@@ -207,6 +207,7 @@ model RepairJob {
   brand              String
   model              String
   serialNumber       String?
+  technician         String?
 
   problemDescription String
   diagnosis          String?

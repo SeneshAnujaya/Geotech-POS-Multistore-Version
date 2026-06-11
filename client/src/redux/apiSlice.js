@@ -6,7 +6,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 const apiSlice = createApi({
     reducerPath: 'api',
     baseQuery: fetchBaseQuery({ baseUrl: apiUrl, credentials: 'include', }),
-    tagTypes: ['Products', 'Sales', 'Categories', 'WholesaleClients', 'Users', 'Payments', 'Stores', 'Stocks'],
+    tagTypes: ['Products', 'Sales', 'Categories', 'WholesaleClients', 'Users', 'Payments', 'Stores', 'Stocks', 'Repair'],
     endpoints: (builder) => ({
 
         // Products EndPoints
@@ -331,10 +331,22 @@ const apiSlice = createApi({
 
         }),
 
+        // RepairJob Endpoint
+        createRepairjob: builder.mutation({
+            query: (formData) => ({
+                url: '/repair/add',
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: formData,
+
+            }),
+            invalidatesTags: ['Repair']
+        }),
+
 
 
     })
 });
 
-export const { useFetchProductsQuery, useFetchPaginatedProductsQuery, useFetchFilteredPaginatedProductsQuery, useCreateProductMutation, useDeleteProductMutation, useUpdateProductMutation, useFetchCategoriesQuery, useFetchFilteredCategoriesQuery, useCreateCategoryMutation, useDeleteCategoryMutation, useUpdateCategoryMutation, useFetchSalesQuery, useFetchPaginatedSalesQuery, useFetchDueSalesQuery, useFetchReturnCancelSalesQuery, useCancelSaleRecordMutation, useFetchRecent14DaySalesQuery, useFetchWholesaleClientsQuery, useCreateWholesaleClientMutation, useDeleteWholesaleClientMutation, useUpdateWholesaleClientMutation, useFetchUsersQuery, useCreateUserMutation, useDeleteUserMutation, useUpdateUserMutation, useUpdateUserAccountMutation, useCheckSetupStatusQuery, useFetchSingleClientPaymentsQuery, useFetchStoresQuery, useCreateStoreMutation, useUpdateStoreMutation, useDeleteStoreMutation, useFetchTotalRevenueQuery, useFetchMonthlyRevenueQuery, useFetchDailyRevenueQuery, useFetchTotalSalesQuery, useFetchMonthlySaleCountQuery, useFetchStocksQuery, useCreateStockMutation, useUpdateStockMutation, useDeleteStockMutation } = apiSlice;
+export const { useFetchProductsQuery, useFetchPaginatedProductsQuery, useFetchFilteredPaginatedProductsQuery, useCreateProductMutation, useDeleteProductMutation, useUpdateProductMutation, useFetchCategoriesQuery, useFetchFilteredCategoriesQuery, useCreateCategoryMutation, useDeleteCategoryMutation, useUpdateCategoryMutation, useFetchSalesQuery, useFetchPaginatedSalesQuery, useFetchDueSalesQuery, useFetchReturnCancelSalesQuery, useCancelSaleRecordMutation, useFetchRecent14DaySalesQuery, useFetchWholesaleClientsQuery, useCreateWholesaleClientMutation, useDeleteWholesaleClientMutation, useUpdateWholesaleClientMutation, useFetchUsersQuery, useCreateUserMutation, useDeleteUserMutation, useUpdateUserMutation, useUpdateUserAccountMutation, useCheckSetupStatusQuery, useFetchSingleClientPaymentsQuery, useFetchStoresQuery, useCreateStoreMutation, useUpdateStoreMutation, useDeleteStoreMutation, useFetchTotalRevenueQuery, useFetchMonthlyRevenueQuery, useFetchDailyRevenueQuery, useFetchTotalSalesQuery, useFetchMonthlySaleCountQuery, useFetchStocksQuery, useCreateStockMutation, useUpdateStockMutation, useDeleteStockMutation, useCreateRepairjobMutation } = apiSlice;
 export default apiSlice;
