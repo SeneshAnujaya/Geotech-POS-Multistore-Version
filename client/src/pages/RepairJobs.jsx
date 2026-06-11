@@ -7,24 +7,21 @@ import {
   showSuccessToast,
 } from "../components/ToastNotification";
 import {
-  useFetchStocksQuery,
-  useCreateStockMutation,
   useUpdateStockMutation,
   useDeleteStockMutation,
-  useFetchPaginatedProductsQuery,
   useCreateRepairjobMutation,
+  useFetchRepairjobsQuery,
 } from "../redux/apiSlice";
 import { CircularProgress, Box, Skeleton } from "@mui/material";
 import { formatDateTime } from "../dateUtil";
 import SearchBar from "../components/SearchBar";
-import StockAddModal from "../components/StockAddModal";
 import RepairAddModal from "../components/RepairAddModal";
 
 const DataTable = lazy(() => import("../components/DataTable"));
 
 const RepairJobs = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isStockModalOpen, setIsStockModalOpen] = useState(false);
+  const [isRepairModalOpen, setIsRepairModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState();
   const selectedStoreId = useSelector((state) => state.store.selectedStoreId);
@@ -35,29 +32,35 @@ const RepairJobs = () => {
   });
 
   // get stock data
-   const {
-    data: stocks = { data: [] },
+  const {
+    data: repairjobs = { data: [] },
     refetch,
-    isLoading: isStocksLoading,
-    error: isStockError,
-  } = useFetchStocksQuery({
-    page: paginationModel.page,
-    limit: paginationModel.pageSize,
-    searchTerm: debouncedSearchTerm,
-    storeId: selectedStoreId,
-  },  {
-    refetchOnMountOrArgChange: true,
-    refetchOnFocus: true,
-  });
+    isLoading: isRepairjobsLoading,
+    error: isRepairjobsError,
+  } = useFetchRepairjobsQuery(
+    {
+      page: paginationModel.page,
+      limit: paginationModel.pageSize,
+      searchTerm: debouncedSearchTerm,
+      storeId: selectedStoreId,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+      refetchOnFocus: true,
+    },
+  );
 
- 
+  console.log(repairjobs);
+
   useEffect(() => {
     refetch();
   }, [paginationModel, refetch]);
 
   // const [createStock, { isLoading: isStockCreating }] = useCreateStockMutation();
-  const [createRepairjob, {isLoading: isRepairjobLoading}] = useCreateRepairjobMutation();
-  const [deleteStock, { isLoading: isDeletingStock }] = useDeleteStockMutation();
+  const [createRepairjob, { isLoading: isRepairjobLoading }] =
+    useCreateRepairjobMutation();
+  const [deleteStock, { isLoading: isDeletingStock }] =
+    useDeleteStockMutation();
   const [updateStock, { isLoading: isUpdating }] = useUpdateStockMutation();
 
   const { currentUser } = useSelector((state) => state.user);
@@ -66,22 +69,15 @@ const RepairJobs = () => {
 
   const [showLoader, setShowLoader] = useState(true);
 
-  // Refetch Queries
-   const { refetch: refetchPaginatedProducts } = useFetchPaginatedProductsQuery({
-      page: 0,
-      limit: 50,
-      searchTerm: "",
-      storeId: selectedStoreId,
-    });
 
   // Delay loader removal slightly to avoid flashing
   useEffect(() => {
     const loaderTimer = setTimeout(() => {
-      if (!isStocksLoading) setShowLoader(false);
+      if (!isRepairjobLoading) setShowLoader(false);
     }, 100);
 
     return () => clearTimeout(loaderTimer);
-  }, [isStocksLoading]);
+  }, [isRepairjobLoading]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -92,73 +88,84 @@ const RepairJobs = () => {
     };
   }, [searchTerm]);
 
-  const rows = stocks.data.map((stk) => ({
-    id: stk.id,
-    col1: stk.product.sku,
-    col2: stk.product.name,
-    col3: stk.store.name,
-    col4: stk.quantity,
-    col5: formatDateTime(stk.createdAt),
-    col6: formatDateTime(stk.updatedAt),
+  const rows = repairjobs?.repairs?.map((repair) => ({
+    id: repair.repairJobId,
+
+    col1: repair.jobNumber,
+    col2: repair.customerName,
+    col3: repair.customerPhone,
+    col4: repair.deviceType,
+    col5: repair.status,
+    col6: repair.store?.name || "-",
+    col7: formatDateTime(repair.createdAt),
   }));
 
   const columns = [
     {
       field: "col1",
-      headerName: "SKU",
+      headerName: "Job No",
       width: 150,
-      // editable: (params) => params.row.id === editableRowId,
     },
     {
       field: "col2",
-      headerName: "Product",
+      headerName: "Customer",
       width: 200,
     },
     {
       field: "col3",
-      headerName: "Store",
+      headerName: "Phone",
       width: 150,
     },
     {
       field: "col4",
-      headerName: "Quantity",
-      width: 120,
-      editable: (params) => params.row.id === editableRowId,
-      renderCell: (params) => (
-        <div className="flex items-center  h-full">
-          <button
-            variant="contained"
-            color="primary"
-            className={`bg-blue-800 flex rounded-full  h-[20px] pt-0.5 items-center px-3 text-[12px] font-medium leading-none ${
-              params.value === 0
-                ? "bg-red-700"
-                : params.value < 5
-                ? "bg-orange-600"
-                : "bg-blue-800"
-            }`}
-          >
-            {params.value}
-          </button>
-        </div>
-      ),
+      headerName: "Device",
+      width: 150,
     },
     {
       field: "col5",
-      headerName: "Created At",
-      width: 200,
+      headerName: "Status",
+      width: 150,
+      renderCell: (params) => {
+        const status = params.value;
+
+        return (
+          <div className="flex items-center h-full">
+            <span
+              className={`px-3 py-1 rounded-full text-xs font-medium
+              ${
+                status === "RECEIVED"
+                  ? "bg-blue-700"
+                  : status === "DIAGNOSING"
+                    ? "bg-yellow-600"
+                    : status === "REPAIRING"
+                      ? "bg-orange-600"
+                      : status === "READY"
+                        ? "bg-green-600"
+                        : status === "COMPLETED"
+                          ? "bg-emerald-700"
+                          : "bg-red-700"
+              }
+            `}
+            >
+              {status}
+            </span>
+          </div>
+        );
+      },
     },
     {
       field: "col6",
-      headerName: "Updated At",
-      width: 200,
+      headerName: "Store",
+      width: 180,
+    },
+    {
+      field: "col7",
+      headerName: "Created At",
+      width: 220,
     },
   ];
 
   const handleCreateRepairjob = async (formData) => {
-
-    console.log(formData);
-    
-
     try {
       const response = await createRepairjob(formData).unwrap();
 
@@ -167,16 +174,15 @@ const RepairJobs = () => {
         return;
       }
       showSuccessToast("Repairjob is created successfully!");
-      // refetch();
-      // refetchPaginatedProducts();
+      refetch();
     } catch (error) {
       console.log(error);
-      
+
       if (error.data) {
         console.log(error.data.message);
 
         showErrorToast(
-          error.data.message || "An unexpected server error occurred"
+          error.data.message || "An unexpected server error occurred",
         );
       } else {
         showErrorToast("An unexpected error occurred");
@@ -203,7 +209,7 @@ const RepairJobs = () => {
     </Box>
   );
 
-  if (isStockError || !stocks) {
+  if (isRepairjobsError || !repairjobs) {
     return (
       <MainLayout>
         <div className=" text-red-700 py-4 px-4">Failed to get Repairjobs</div>
@@ -228,7 +234,7 @@ const RepairJobs = () => {
             {role == "ADMIN" && (
               <button
                 className="flex items-center bg-blue-700 hover:bg-blue-700 text-gray-200 font-normal py-2 px-3 rounded-md text-md"
-                onClick={() => setIsStockModalOpen(true)}
+                onClick={() => setIsRepairModalOpen(true)}
               >
                 <Layers3Icon className="w-5 h-5 mr-2" />
                 Add Repair
@@ -237,7 +243,7 @@ const RepairJobs = () => {
           </div>
         </div>
 
-        {showLoader || isStocksLoading ? (
+        {showLoader || isRepairjobsLoading ? (
           renderTableSkeleton()
         ) : (
           <div className="w-full">
@@ -255,15 +261,17 @@ const RepairJobs = () => {
                   pagination={true}
                   paginationModel={paginationModel}
                   setPaginationModel={setPaginationModel}
-                  rowCount={stocks.total || 0}
-                  loading={isStocksLoading}
+                  rowCount={repairjobs.total || 0}
+                  loading={isRepairjobLoading}
                 />
               </Suspense>
             </div>
-            {/* MODAL */}         
-            <RepairAddModal isOpen={isStockModalOpen}
-              onClose={() => setIsStockModalOpen(false)}
-              onCreate={handleCreateRepairjob} />
+            {/* MODAL */}
+            <RepairAddModal
+              isOpen={isRepairModalOpen}
+              onClose={() => setIsRepairModalOpen(false)}
+              onCreate={handleCreateRepairjob}
+            />
           </div>
         )}
       </div>

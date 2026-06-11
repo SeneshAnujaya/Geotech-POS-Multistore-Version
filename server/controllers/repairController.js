@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { validateStoreIsActive } from "../utils/validateStore.js";
 
 const prisma = new PrismaClient();
 
@@ -88,3 +89,102 @@ export const addRepair = async (req, res) => {
   }
 };
 
+export const getRepairs = async (req, res) => {
+  const {
+    search,
+    status,
+    page = 0,
+    limit = 20,
+    storeId,
+  } = req.query;
+
+  try {
+    await validateStoreIsActive(storeId);
+
+    const pageNumber = parseInt(page, 10);
+    const pageLimit = parseInt(limit, 10);
+
+    const skip = pageNumber * pageLimit;
+
+    const where = {};
+
+    if (storeId) {
+      where.storeId = storeId;
+    }
+
+    if (status) {
+      where.status = status;
+    }
+
+    if (search) {
+      where.OR = [
+        {
+          customerName: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+        {
+          customerPhone: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+        {
+          jobNumber: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+        {
+          serialNumber: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+      ];
+    }
+
+    const repairs = await prisma.repairJob.findMany({
+      where,
+      skip,
+      take: pageLimit,
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        assignedUser: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        store: {
+          select: {
+            storeId: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    const totalCount = await prisma.repairJob.count({
+      where,
+    });
+
+    return res.status(200).json({
+      success: true,
+      repairs,
+      total: totalCount,
+      page: pageNumber,
+      limit: pageLimit,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching repair jobs",
+    });
+  }
+};

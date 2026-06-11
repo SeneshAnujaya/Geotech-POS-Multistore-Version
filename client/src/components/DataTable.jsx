@@ -50,7 +50,7 @@ const DataTable = ({
 
   const handleDeleteClick = (id) => async () => {
     try {
-      const res = await deleteRow({id, selectedStoreId}).unwrap();
+      const res = await deleteRow({ id, selectedStoreId }).unwrap();
 
       if (res.success == true) {
         showSuccessToast("Row deleted successfully!");
@@ -60,10 +60,10 @@ const DataTable = ({
       }
     } catch (error) {
       console.log(error);
-      
+
       if (error.data) {
         showErrorToast(
-          error.data.message || "An unexpected server error occurred"
+          error.data.message || "An unexpected server error occurred",
         );
       } else {
         showErrorToast("An unexpected error occurred");
@@ -86,7 +86,7 @@ const DataTable = ({
   const processRowUpdate = async (newRow) => {
     const updatedRow = { ...newRow, isNew: false };
     setDataRows(
-      dataRows.map((row) => (row.id === newRow.id ? updatedRow : row))
+      dataRows.map((row) => (row.id === newRow.id ? updatedRow : row)),
     );
 
     await handleUpdateRowReq(updatedRow);
@@ -112,7 +112,11 @@ const DataTable = ({
     const { id } = updatedRow;
 
     try {
-      const res = await updateRow({ id, updatedData, selectedStoreId }).unwrap();
+      const res = await updateRow({
+        id,
+        updatedData,
+        selectedStoreId,
+      }).unwrap();
 
       if (res.success) {
         showSuccessToast("Row updated successfully!");
@@ -123,7 +127,7 @@ const DataTable = ({
       console.log(error);
       if (error.data) {
         showErrorToast(
-          error.data.message || "An unexpected server error occurred"
+          error.data.message || "An unexpected server error occurred",
         );
       } else {
         showErrorToast("An unexpected error occurred");
@@ -199,6 +203,9 @@ const DataTable = ({
         sx={{
           "& .MuiDataGrid-columnHeaders": {
             backgroundColor: "#0f172a",
+          },
+          "& .MuiDataGrid-cell": {
+            fontWeight: "300",
           },
         }}
       />

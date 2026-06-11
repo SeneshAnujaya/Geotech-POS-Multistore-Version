@@ -250,7 +250,7 @@ const RepairAddModal = ({
       resetForm();
       onClose();
     }}
-    className="flex items-center gap-2 px-4 py-2 bg-red-700 text-white text-sm font-medium rounded-md hover:bg-red-800 transition-colors duration-200"
+    className="flex items-center gap-2 px-4 py-2 bg-red-700 text-white text-sm font-base rounded-md hover:bg-red-800 transition-colors duration-200"
   >
     <X size={18} />
     Cancel
@@ -258,7 +258,7 @@ const RepairAddModal = ({
 
   <button
     type="submit"
-    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors duration-200"
+    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-base rounded-md hover:bg-green-700 transition-colors duration-200"
   >
     <Save size={18} />
     Create Repair Job

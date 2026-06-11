@@ -332,6 +332,11 @@ const apiSlice = createApi({
         }),
 
         // RepairJob Endpoint
+          fetchRepairjobs: builder.query({
+            query: ({ page = 0, limit = 20, searchTerm = '', storeId }) => `/repair?page=${page}&limit=${limit}&searchTerm=${searchTerm}&storeId=${storeId}`,
+            providesTags: ['Repair']
+        }),
+
         createRepairjob: builder.mutation({
             query: (formData) => ({
                 url: '/repair/add',
@@ -348,5 +353,5 @@ const apiSlice = createApi({
     })
 });
 
-export const { useFetchProductsQuery, useFetchPaginatedProductsQuery, useFetchFilteredPaginatedProductsQuery, useCreateProductMutation, useDeleteProductMutation, useUpdateProductMutation, useFetchCategoriesQuery, useFetchFilteredCategoriesQuery, useCreateCategoryMutation, useDeleteCategoryMutation, useUpdateCategoryMutation, useFetchSalesQuery, useFetchPaginatedSalesQuery, useFetchDueSalesQuery, useFetchReturnCancelSalesQuery, useCancelSaleRecordMutation, useFetchRecent14DaySalesQuery, useFetchWholesaleClientsQuery, useCreateWholesaleClientMutation, useDeleteWholesaleClientMutation, useUpdateWholesaleClientMutation, useFetchUsersQuery, useCreateUserMutation, useDeleteUserMutation, useUpdateUserMutation, useUpdateUserAccountMutation, useCheckSetupStatusQuery, useFetchSingleClientPaymentsQuery, useFetchStoresQuery, useCreateStoreMutation, useUpdateStoreMutation, useDeleteStoreMutation, useFetchTotalRevenueQuery, useFetchMonthlyRevenueQuery, useFetchDailyRevenueQuery, useFetchTotalSalesQuery, useFetchMonthlySaleCountQuery, useFetchStocksQuery, useCreateStockMutation, useUpdateStockMutation, useDeleteStockMutation, useCreateRepairjobMutation } = apiSlice;
+export const { useFetchProductsQuery, useFetchPaginatedProductsQuery, useFetchFilteredPaginatedProductsQuery, useCreateProductMutation, useDeleteProductMutation, useUpdateProductMutation, useFetchCategoriesQuery, useFetchFilteredCategoriesQuery, useCreateCategoryMutation, useDeleteCategoryMutation, useUpdateCategoryMutation, useFetchSalesQuery, useFetchPaginatedSalesQuery, useFetchDueSalesQuery, useFetchReturnCancelSalesQuery, useCancelSaleRecordMutation, useFetchRecent14DaySalesQuery, useFetchWholesaleClientsQuery, useCreateWholesaleClientMutation, useDeleteWholesaleClientMutation, useUpdateWholesaleClientMutation, useFetchUsersQuery, useCreateUserMutation, useDeleteUserMutation, useUpdateUserMutation, useUpdateUserAccountMutation, useCheckSetupStatusQuery, useFetchSingleClientPaymentsQuery, useFetchStoresQuery, useCreateStoreMutation, useUpdateStoreMutation, useDeleteStoreMutation, useFetchTotalRevenueQuery, useFetchMonthlyRevenueQuery, useFetchDailyRevenueQuery, useFetchTotalSalesQuery, useFetchMonthlySaleCountQuery, useFetchStocksQuery, useCreateStockMutation, useUpdateStockMutation, useDeleteStockMutation, useFetchRepairjobsQuery, useCreateRepairjobMutation } = apiSlice;
 export default apiSlice;
