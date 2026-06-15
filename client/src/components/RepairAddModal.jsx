@@ -1,7 +1,7 @@
 import { useState } from "react";
 import StoreSelect from "./StoreSelect";
 import { showErrorToast } from "./ToastNotification";
-import {Save, X} from 'lucide-react'
+import { Save, X } from 'lucide-react'
 
 const RepairAddModal = ({
   isOpen,
@@ -17,9 +17,15 @@ const RepairAddModal = ({
     brand: "",
     model: "",
     serialNumber: "",
-    technician:"",
+    technician: "",
 
     problemDescription: "",
+    receivedItems: "",
+    physicalCondition: "",
+
+    estimatedCost: "",
+    expectedDeliveryDate: "",
+
 
     storeId: "",
     assignedUserId: "",
@@ -43,9 +49,15 @@ const RepairAddModal = ({
       brand: "",
       model: "",
       serialNumber: "",
-      technician:"",
+      technician: "",
 
       problemDescription: "",
+      receivedItems: "",
+      physicalCondition: "",
+
+      estimatedCost: "",
+      expectedDeliveryDate: "",
+
 
       storeId: "",
       assignedUserId: "",
@@ -59,6 +71,9 @@ const RepairAddModal = ({
       !formData.customerName ||
       !formData.customerPhone ||
       !formData.deviceType ||
+      !formData.brand ||
+      !formData.model ||
+      !formData.technician ||
       !formData.problemDescription ||
       !formData.storeId
     ) {
@@ -79,7 +94,7 @@ const RepairAddModal = ({
 
   return (
     <div className="fixed inset-0 bg-black/70 overflow-y-auto z-50">
-      <div className="relative top-20 mx-auto p-5 border border-slate-700 w-[800px] shadow-xl rounded-lg bg-slate-950">
+      <div className="relative top-20 mx-auto mb-20 p-5 border border-slate-700 w-[800px] shadow-xl rounded-lg bg-slate-950">
         <h2 className="text-[1.4rem] font-medium text-slate-200 mb-5">
           Create Repair Job
         </h2>
@@ -146,7 +161,7 @@ const RepairAddModal = ({
             {/* Brand */}
             <div>
               <label className={labelStyle}>
-                Brand
+                Brand *
               </label>
 
               <input
@@ -155,14 +170,15 @@ const RepairAddModal = ({
                 value={formData.brand}
                 onChange={handleInputChange}
                 placeholder="Brand"
-                 className={inputStyle}
+                className={inputStyle}
+                required
               />
             </div>
 
             {/* Model */}
             <div>
               <label className={labelStyle}>
-                Model
+                Model *
               </label>
 
               <input
@@ -171,7 +187,8 @@ const RepairAddModal = ({
                 value={formData.model}
                 onChange={handleInputChange}
                 placeholder="Model"
-                 className={inputStyle}
+                className={inputStyle}
+                required
               />
             </div>
 
@@ -187,16 +204,61 @@ const RepairAddModal = ({
                 value={formData.serialNumber}
                 onChange={handleInputChange}
                 placeholder="Serial Number"
-                 className={inputStyle}
+                className={inputStyle}
+              />
+            </div>
+
+            {/* Technician */}
+            <div>
+              <label className={labelStyle}>
+                Technician *
+              </label>
+
+              <input
+                type="text"
+                name="technician"
+                value={formData.technician}
+                onChange={handleInputChange}
+                placeholder="Technician"
+                className={inputStyle}
+                required
+              />
+            </div>
+
+            {/* Estimated Cost */}
+            <div>
+              <label className={labelStyle}>
+                Estimated Cost
+              </label>
+
+              <input
+                type="number"
+                name="estimatedCost"
+                value={formData.estimatedCost}
+                onChange={handleInputChange}
+                placeholder="Estimated Cost"
+                className={inputStyle}
+              />
+            </div>
+
+            {/* Expected Delivery Date */}
+            <div>
+              <label className={labelStyle}>
+                Expected Delivery Date
+              </label>
+
+              <input
+                type="date"
+                name="expectedDeliveryDate"
+                value={formData.expectedDeliveryDate}
+                onChange={handleInputChange}
+                placeholder="Expected Delivery Date"
+                className={inputStyle}
               />
             </div>
 
             {/* Store */}
             <div>
-              {/* <label className={labelStyle}>
-                Store *
-              </label> */}
-
               <StoreSelect
                 value={formData.storeId}
                 onChange={(e) =>
@@ -208,21 +270,6 @@ const RepairAddModal = ({
               />
             </div>
 
-            {/* Technician */}
-            <div>
-              <label className={labelStyle}>
-                Technician
-              </label>
-
-              <input
-                type="text"
-                name="technician"
-                value={formData.technician}
-                onChange={handleInputChange}
-                placeholder="Technician"
-                 className={inputStyle}
-              />
-            </div>
           </div>
 
           {/* Problem Description */}
@@ -242,28 +289,62 @@ const RepairAddModal = ({
             />
           </div>
 
+          {/* Received Items */}
+          <div className="mt-4">
+            <label className={labelStyle}>
+              Received Items
+            </label>
+
+            <textarea
+              name="receivedItems"
+              value={formData.receivedItems}
+              onChange={handleInputChange}
+              rows={5}
+              placeholder="Received Items..."
+              className={inputStyle}
+              required
+            />
+          </div>
+
+          {/* Physical Condition */}
+          <div className="mt-4">
+            <label className={labelStyle}>
+              Physical Condition
+            </label>
+
+            <textarea
+              name="physicalCondition"
+              value={formData.physicalCondition}
+              onChange={handleInputChange}
+              rows={5}
+              placeholder="Physical Condition..."
+              className={inputStyle}
+              required
+            />
+          </div>
+
           {/* Buttons */}
           <div className="flex justify-end gap-3 mt-6">
-  <button
-    type="button"
-    onClick={() => {
-      resetForm();
-      onClose();
-    }}
-    className="flex items-center gap-2 px-4 py-2 bg-red-700 text-white text-sm font-base rounded-md hover:bg-red-800 transition-colors duration-200"
-  >
-    <X size={18} />
-    Cancel
-  </button>
+            <button
+              type="button"
+              onClick={() => {
+                resetForm();
+                onClose();
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-red-700 text-white text-sm font-base rounded-md hover:bg-red-800 transition-colors duration-200"
+            >
+              <X size={18} />
+              Cancel
+            </button>
 
-  <button
-    type="submit"
-    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-base rounded-md hover:bg-green-700 transition-colors duration-200"
-  >
-    <Save size={18} />
-    Create Repair Job
-  </button>
-</div>
+            <button
+              type="submit"
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-base rounded-md hover:bg-green-700 transition-colors duration-200"
+            >
+              <Save size={18} />
+              Create Repair Job
+            </button>
+          </div>
         </form>
       </div>
     </div>

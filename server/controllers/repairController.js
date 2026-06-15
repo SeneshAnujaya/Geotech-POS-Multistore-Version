@@ -8,12 +8,20 @@ export const addRepair = async (req, res) => {
     const {
       customerName,
       customerPhone,
+
       deviceType,
       brand,
       model,
       serialNumber,
       technician,
+
       problemDescription,
+      receivedItems,
+      physicalCondition,
+
+      estimatedCost,
+      expectedDeliveryDate,
+
       assignedUserId,
       storeId,
     } = req.body;
@@ -65,6 +73,16 @@ export const addRepair = async (req, res) => {
         technician,
 
         problemDescription,
+        receivedItems,
+        physicalCondition,
+
+        estimatedCost: estimatedCost
+          ? Number(estimatedCost)
+          : null,
+
+        expectedDeliveryDate: expectedDeliveryDate
+          ? new Date(expectedDeliveryDate)
+          : null,
 
         assignedUserId: assignedUserId || null,
         storeId,

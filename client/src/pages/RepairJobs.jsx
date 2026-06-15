@@ -16,6 +16,7 @@ import { CircularProgress, Box, Skeleton } from "@mui/material";
 import { formatDateTime } from "../dateUtil";
 import SearchBar from "../components/SearchBar";
 import RepairAddModal from "../components/RepairAddModal";
+import repairReceiptPDF from "../components/RepairReceiptPDF";
 
 const DataTable = lazy(() => import("../components/DataTable"));
 
@@ -50,7 +51,6 @@ const RepairJobs = () => {
     },
   );
 
-  console.log(repairjobs);
 
   useEffect(() => {
     refetch();
@@ -95,9 +95,13 @@ const RepairJobs = () => {
     col2: repair.customerName,
     col3: repair.customerPhone,
     col4: repair.deviceType,
-    col5: repair.status,
-    col6: repair.store?.name || "-",
-    col7: formatDateTime(repair.createdAt),
+    col5: repair.model,
+    col6: repair.serialNumber,
+    col7: repair.technician,
+    col8: repair.status,
+    // col9: repair.store?.name || "-",
+    col9: repair.estimatedCost,
+    col10: formatDateTime(repair.createdAt),
   }));
 
   const columns = [
@@ -119,12 +123,27 @@ const RepairJobs = () => {
     {
       field: "col4",
       headerName: "Device",
-      width: 150,
+      width: 100,
     },
     {
       field: "col5",
+      headerName: "Model",
+      width: 130,
+    },
+    {
+      field: "col6",
+      headerName: "Serial Number",
+      width: 120,
+    },
+    {
+      field: "col7",
+      headerName: "Technician",
+      width: 120,
+    },
+    {
+      field: "col8",
       headerName: "Status",
-      width: 150,
+      width: 130,
       renderCell: (params) => {
         const status = params.value;
 
@@ -132,8 +151,7 @@ const RepairJobs = () => {
           <div className="flex items-center h-full">
             <span
               className={`px-3 py-1 rounded-full text-xs font-medium
-              ${
-                status === "RECEIVED"
+              ${status === "RECEIVED"
                   ? "bg-blue-700"
                   : status === "DIAGNOSING"
                     ? "bg-yellow-600"
@@ -144,7 +162,7 @@ const RepairJobs = () => {
                         : status === "COMPLETED"
                           ? "bg-emerald-700"
                           : "bg-red-700"
-              }
+                }
             `}
             >
               {status}
@@ -153,28 +171,43 @@ const RepairJobs = () => {
         );
       },
     },
+    // {
+    //   field: "col9",
+    //   headerName: "Store",
+    //   width: 100,
+    // },
     {
-      field: "col6",
-      headerName: "Store",
-      width: 180,
+      field: "col9",
+      headerName: "Etimated Cost",
+      width: 120,
     },
     {
-      field: "col7",
+      field: "col10",
       headerName: "Created At",
-      width: 220,
+      width: 180,
     },
   ];
 
   const handleCreateRepairjob = async (formData) => {
     try {
-      const response = await createRepairjob(formData).unwrap();
+      // const response = await createRepairjob(formData).unwrap();
 
-      if (!response.success) {
-        showErrorToast(data.message || "Error occurred");
-        return;
-      }
-      showSuccessToast("Repairjob is created successfully!");
-      refetch();
+      // if (!response.success) {
+      //   showErrorToast(data.message || "Error occurred");
+      //   return;
+      // }
+      // showSuccessToast("Repairjob is created successfully!");
+      
+      
+      // repairReceiptPDF(response.repair)
+      // refetch();
+      // repairReceiptPDF(formData);
+      repairReceiptPDF({
+  ...formData,
+  jobNumber: "TEST-001",
+  status: "RECEIVED",
+  createdAt: new Date(),
+});
     } catch (error) {
       console.log(error);
 
