@@ -36,7 +36,7 @@ const repairReceiptPDF = (repair) => {
         GEOTECH COMPUTERS
       </h1>
 
-      <div style="font-size:12px;color:#00;margin-top:6px">
+      <div style="font-size:12px;color:#00;margin-top:3px">
         Specialized in Desktop, Laptop Computers & Accessories
       </div>
 
@@ -58,25 +58,20 @@ const repairReceiptPDF = (repair) => {
         REPAIR RECEIPT
       </div>
 
-      <div style="margin-top:10px; font-size:12px">
+      <div style="margin-top:5px; font-size:12px">
         <div>Job No: ${repair.jobNumber || "-"}</div>
         <div>Date: ${currentDate}</div>
+        <div style='margin-top:3px'>Customer: ${repair.customerName || "-"}</div>
+        <div style="margin-top:1px;">
+      Phone: ${repair.customerPhone || "-"}
+    </div>
       </div>
     </div>
   </div>
 
-  <div style="
-    margin-bottom:10px;
-    font-size:12px
-  ">
-    <div>Customer: ${repair.customerName || "-"}</div>
-    <div style="margin-top:1px;">
-      Phone: ${repair.customerPhone || "-"}
-    </div>
-  </div>
 
   <div style="
-    font-size:16px;
+    font-size:14px;
     font-weight:600;
     margin-bottom:15px;
     color:#000;
@@ -84,59 +79,71 @@ const repairReceiptPDF = (repair) => {
     DEVICE INFORMATION
   </div>
 
-  <table style="
+ <table
+  style="
     width:100%;
     border-collapse:collapse;
-    margin-bottom:15px;
-  ">
+    border-spacing:0;
+    border:1px solid #000;
+    margin-bottom:0px;
+    font-size:12px;
+  "
+>
+  <tbody>
     <tr>
-      <td style="border:1px solid #000;padding:2px;font-weight:600;width:35%;">
-        Device Type
+      <td
+        style="
+          border:1px solid #000;
+          padding:1px 10px 11px 10px;
+          font-weight:600;
+          background:#f5f5f5;
+          width:35%;
+          vertical-align: middle;
+          font-size: 13px
+        "
+      >
+        Device Information
       </td>
-      <td style="border:1px solid #000;padding:2px;">
-        ${repair.deviceType || "-"}
+      <td
+        style="
+          border:1px solid #000;
+          padding:1px 10px 11px 10px;
+          vertical-align: middle;
+          font-size: 14px
+        "
+      >
+       Type: ${repair.deviceType || "-"} | Brand:  ${repair.brand || "-"} | Model: ${repair.model || "-"} | Serial Number: ${repair.serialNumber || "-"} 
       </td>
     </tr>
 
     <tr>
-      <td style="border:1px solid #000;padding:2px;font-weight:600;">
-        Brand
+      <td
+        style="
+          border:1px solid #000;
+          padding:1px 10px 11px 10px;
+          font-weight:600;
+          background:#f5f5f5;
+          vertical-align:middle;
+          font-size: 13px
+        "
+      >
+        Received Items
       </td>
-      <td style="border:1px solid #000;padding:2px;">
-        ${repair.brand || "-"}
-      </td>
-    </tr>
-
-    <tr>
-      <td style="border:1px solid #000;padding:2px;font-weight:600;">
-        Model
-      </td>
-      <td style="border:1px solid #000;padding:2px;">
-        ${repair.model || "-"}
-      </td>
-    </tr>
-
-    <tr>
-      <td style="border:1px solid #000;padding:2px;font-weight:600;">
-        Serial Number
-      </td>
-      <td style="border:1px solid #000;padding:2px;">
-        ${repair.serialNumber || "-"}
+      <td
+        style="
+          border:1px solid #000;
+          padding:1px 10px 11px 10px;
+          vertical-align:middle;
+          font-size: 14px"
+      >
+        ${repair.receivedItems || "-"}
       </td>
     </tr>
-
-    <tr>
-      <td style="border:1px solid #000;padding:2px;font-weight:600;">
-        Status
-      </td>
-      <td style="border:1px solid #000;padding:2px;">
-        ${repair.status || "RECEIVED"}
-      </td>
-    </tr>
-  </table>
+  </tbody>
+</table>
 
   <div style="
-    font-size:16px;
+    font-size:14px;
     font-weight:bold;
     margin-bottom:0px;
     color:#1e293b;
@@ -145,10 +152,11 @@ const repairReceiptPDF = (repair) => {
   </div>
 
   <div style="
-    min-height:60px;
+    min-height:40px;
     margin-bottom:10px;
     color:#000
     border: 1px solid red;
+    font-size: 13px
   ">
     ${repair.problemDescription || "-"}
   </div>
@@ -161,27 +169,18 @@ const repairReceiptPDF = (repair) => {
       Important
     </div>
 
-    <div style="font-size:12px; font-weight:500">
+    <div style="font-size:10px; font-weight:500">
       • මෙම රිසිට් පත නොමැතිව ඔබ ලබා දුන් භාණ්ඩය නිකුත් කරනු නොලැබේ.
     </div>
 
-    <div style="font-size:12px; margin-top:2px;">
+    <div style="font-size:10px; margin-top:2px;">
       • වගකීම් හෝ අලුත් වැඩියා සඳහා ලබා දෙන උපකරණ සූදානම් කිරීමෙන් අනතුරුව අප ඔබට දැනුම් දීමක් සිදුකරන අතර එදින සිට දින 30 කාලයක් ඇතුළත අදාල උපකරණය රැගෙන යාමට කටයුතු කරන්න.ඉන් පසු භාණ්ඩය සම්බන්ධයෙන් අප වගකියනු නොලැබේ.
     </div>
 
-    <div style="margin-top:2px; font-size:12px;">
+    <div style="margin-top:2px; font-size:10px;">
       • අලුත් වැඩියාව සිදු නොකර දෝෂ පරීක්ෂාවේ දී පමණක් ඩෙස්ක්ටොප් පරිගණක සහ ලැප්ටොප් පරිගණක සඳහා රු. 500.00 ක මුදලක් අය කරනු ලැබේ.
     </div>
-
-     <div style="margin-top:2px; font-size:12px;">
-      • අලුත් වැඩියා කරන භාණ්ඩයේ එම අලුත් වැඩියා කරන කොටස සඳහා පමණක් දින 30 ක කාලයක් වගකියනු ලැබේ. (මෙය printers Head සඳහා අදාළ නොවේ)
-    </div>
-
-    <div style="margin-top:2px; font-size:12px;">
-      • අලුත් වැඩියා කරන භාණ්ඩයේ එම අලුත් වැඩියා කරන කොටස සඳහා පමණක් දින 30 ක කාලයක් වගකියනු ලැබේ. (මෙය printers Head සඳහා අදාළ නොවේ)
-    </div>
-
-     <div style="margin-top:2px; font-size:12px;">
+     <div style="margin-top:2px; font-size:10px;">
       • අප ආයතනයට ලබා දෙන No Power / No Display Laptop / Desktop හි දෝෂ ඇත්නම් අප ආයතනය දැනුවත් කරන්න. (Keyboard / Display Screens / Ram / HDD / DVD writer සහ අනෙකුත් කොටස්) එසේත් නොමැති නම් ඒ සඳහා අප ආයතනය වගකියනු නොලැබේ.
     </div>
 
@@ -190,18 +189,18 @@ const repairReceiptPDF = (repair) => {
   </div>
 
   <div style="
-    margin-top:70px;
+    margin-top:60px;
     display:flex;
     justify-content:space-between;
   ">
     <div style="width:220px;text-align:center;">
-      <div style="border-top:1px solid #000;padding-top:6px;">
+      <div style="border-top:1px solid #000;padding-top:0px; font-size:14px">
         Authorized Signature
       </div>
     </div>
 
     <div style="width:220px;text-align:center;">
-      <div style="border-top:1px solid #000;padding-top:6px;">
+      <div style="border-top:1px solid #000;padding-top:0px; font-size:14px">
         Customer Signature
       </div>
     </div>
