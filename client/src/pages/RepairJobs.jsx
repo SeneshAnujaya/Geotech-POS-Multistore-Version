@@ -1,7 +1,7 @@
 import { useEffect, useState, Suspense, lazy } from "react";
 import MainLayout from "../components/MainLayout";
 import { useSelector } from "react-redux";
-import { Layers3Icon } from "lucide-react";
+import { Layers3Icon, ReceiptText, Settings2 } from "lucide-react";
 import {
   showErrorToast,
   showSuccessToast,
@@ -11,12 +11,16 @@ import {
   useDeleteStockMutation,
   useCreateRepairjobMutation,
   useFetchRepairjobsQuery,
+  useFetchSingleRepairJobQuery,
+  useDeleteRepairJobMutation,
+  useUpdateRepairJobMutation,
 } from "../redux/apiSlice";
 import { CircularProgress, Box, Skeleton } from "@mui/material";
 import { formatDateTime } from "../dateUtil";
 import SearchBar from "../components/SearchBar";
 import RepairAddModal from "../components/RepairAddModal";
 import repairReceiptPDF from "../components/RepairReceiptPDF";
+import { useNavigate } from "react-router-dom";
 
 const DataTable = lazy(() => import("../components/DataTable"));
 
@@ -32,7 +36,7 @@ const RepairJobs = () => {
     pageSize: 50,
   });
 
-  // get stock data
+  // get repair job data
   const {
     data: repairjobs = { data: [] },
     refetch,
@@ -51,17 +55,21 @@ const RepairJobs = () => {
     },
   );
 
-
   useEffect(() => {
     refetch();
   }, [paginationModel, refetch]);
 
-  // const [createStock, { isLoading: isStockCreating }] = useCreateStockMutation();
   const [createRepairjob, { isLoading: isRepairjobLoading }] =
     useCreateRepairjobMutation();
-  const [deleteStock, { isLoading: isDeletingStock }] =
-    useDeleteStockMutation();
-  const [updateStock, { isLoading: isUpdating }] = useUpdateStockMutation();
+  const [deleteRepairJob, { isLoading: isDeletingRepairJob }] =
+    useDeleteRepairJobMutation();
+  const [updateRepairJob, { isLoading: isUpdatingRepairJob }] =
+    useUpdateRepairJobMutation();
+  // Get Single Repair Job Details
+  // const {data: getSingleRepairJob,  isLoading: isSingleRepairLoading } =
+  //   useFetchSingleRepairJobQuery();
+
+  //   console.log(getSingleRepairJob);
 
   const { currentUser } = useSelector((state) => state.user);
 
@@ -69,6 +77,7 @@ const RepairJobs = () => {
 
   const [showLoader, setShowLoader] = useState(true);
 
+  const navigate = useNavigate();
 
   // Delay loader removal slightly to avoid flashing
   useEffect(() => {
@@ -90,6 +99,7 @@ const RepairJobs = () => {
 
   const rows = repairjobs?.repairs?.map((repair) => ({
     id: repair.repairJobId,
+    repair,
 
     col1: repair.jobNumber,
     col2: repair.customerName,
@@ -114,36 +124,62 @@ const RepairJobs = () => {
       field: "col2",
       headerName: "Customer",
       width: 200,
+      editable: true,
     },
     {
       field: "col3",
       headerName: "Phone",
       width: 150,
+      editable: true,
     },
     {
       field: "col4",
       headerName: "Device",
       width: 100,
+      editable: true,
+      type: "singleSelect",
+      valueOptions: [
+        "Laptop",
+        "Desktop",
+        "Printer",
+        "Monitor",
+        "UPS",
+        "Router",
+        "Other",
+      ],
     },
     {
       field: "col5",
       headerName: "Model",
       width: 130,
+      editable: true,
     },
     {
       field: "col6",
       headerName: "Serial Number",
       width: 120,
+      editable: true,
     },
     {
       field: "col7",
       headerName: "Technician",
       width: 120,
+      editable: true,
     },
     {
       field: "col8",
       headerName: "Status",
       width: 130,
+      editable: true,
+      type: "singleSelect",
+      valueOptions: [
+        "RECEIVED",
+        "DIAGNOSING",
+        "REPAIRING",
+        "READY",
+        "COMPLETED",
+        "CANCELLED",
+      ],
       renderCell: (params) => {
         const status = params.value;
 
@@ -151,8 +187,9 @@ const RepairJobs = () => {
           <div className="flex items-center h-full">
             <span
               className={`px-3 py-1 rounded-full text-xs font-medium
-              ${status === "RECEIVED"
-                  ? "bg-blue-700"
+              ${
+                status === "RECEIVED"
+                  ? "bg-purple-700"
                   : status === "DIAGNOSING"
                     ? "bg-yellow-600"
                     : status === "REPAIRING"
@@ -162,7 +199,7 @@ const RepairJobs = () => {
                         : status === "COMPLETED"
                           ? "bg-emerald-700"
                           : "bg-red-700"
-                }
+              }
             `}
             >
               {status}
@@ -180,34 +217,69 @@ const RepairJobs = () => {
       field: "col9",
       headerName: "Etimated Cost",
       width: 120,
+      editable: true,
     },
     {
       field: "col10",
       headerName: "Created At",
       width: 180,
     },
+    {
+      field: "col11",
+      headerName: "Invoice",
+      width: 90,
+      renderCell: (params) => (
+        <div className="flex items-center h-full">
+          <button
+            variant="contained"
+            color="primary"
+            className="bg-blue-800 flex rounded-full h-6 items-center px-3"
+            onClick={() => repairReceiptPDF(params.row.repair)}
+          >
+            Invoice
+          </button>
+        </div>
+      ),
+    },
+    {
+      field: "col12",
+      headerName: "Manage",
+      width: 105,
+      renderCell: (params) => (
+        <div className="flex items-center h-full">
+          <button
+            variant="contained"
+            color="primary"
+            className="bg-orange-600 flex rounded-full h-6 items-center px-3"
+            onClick={() => navigate(`/repairDetails/${params.row.id}`)}
+          >
+            <Settings2 size={15} />
+            Manage
+          </button>
+        </div>
+      ),
+    },
   ];
 
   const handleCreateRepairjob = async (formData) => {
     try {
-      // const response = await createRepairjob(formData).unwrap();
+      const response = await createRepairjob(formData).unwrap();
 
-      // if (!response.success) {
-      //   showErrorToast(data.message || "Error occurred");
-      //   return;
-      // }
-      // showSuccessToast("Repairjob is created successfully!");
-      
-      
-      // repairReceiptPDF(response.repair)
-      // refetch();
-      // repairReceiptPDF(formData);
+      if (!response.success) {
+        showErrorToast(data.message || "Error occurred");
+        return;
+      }
+      showSuccessToast("Repairjob is created successfully!");
+
+      repairReceiptPDF(response.repair);
+      refetch();
+      repairReceiptPDF(formData);
       repairReceiptPDF({
-  ...formData,
-  jobNumber: "TEST-001",
-  status: "RECEIVED",
-  createdAt: new Date(),
-});
+        ...formData,
+        jobNumber: "TEST-001",
+        status: "RECEIVED",
+        createdAt: new Date(),
+      });
     } catch (error) {
       console.log(error);
 
@@ -261,18 +333,18 @@ const RepairJobs = () => {
             {/* search bar */}
             <SearchBar
               setSearchTerm={setSearchTerm}
-              placeholder="Search by SKU Name ..."
+              placeholder="Search by Job No, Customer, Phone ..."
             />
 
-            {role == "ADMIN" && (
-              <button
-                className="flex items-center bg-blue-700 hover:bg-blue-700 text-gray-200 font-normal py-2 px-3 rounded-md text-md"
-                onClick={() => setIsRepairModalOpen(true)}
-              >
-                <Layers3Icon className="w-5 h-5 mr-2" />
-                Add Repair
-              </button>
-            )}
+            {/* {role == "ADMIN" && ( */}
+            <button
+              className="flex items-center bg-blue-700 hover:bg-blue-700 text-gray-200 font-normal py-2 px-3 rounded-md text-md"
+              onClick={() => setIsRepairModalOpen(true)}
+            >
+              <Layers3Icon className="w-5 h-5 mr-2" />
+              Add Repair
+            </button>
+            {/* )} */}
           </div>
         </div>
 
@@ -289,8 +361,8 @@ const RepairJobs = () => {
                   rows={rows}
                   columns={columns}
                   role={role}
-                  deleteRow={deleteStock}
-                  updateRow={updateStock}
+                  deleteRow={deleteRepairJob}
+                  updateRow={updateRepairJob}
                   pagination={true}
                   paginationModel={paginationModel}
                   setPaginationModel={setPaginationModel}

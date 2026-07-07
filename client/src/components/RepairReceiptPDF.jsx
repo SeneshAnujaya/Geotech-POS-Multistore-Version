@@ -1,6 +1,8 @@
 import html2pdf from "html2pdf.js";
 
 const repairReceiptPDF = (repair) => {
+  console.log(repair);
+  
   const currentDate = repair.createdAt
     ? new Date(repair.createdAt)
         .toISOString()
@@ -152,7 +154,7 @@ const repairReceiptPDF = (repair) => {
   </div>
 
   <div style="
-    min-height:40px;
+    min-height:30px;
     margin-bottom:10px;
     color:#000
     border: 1px solid red;

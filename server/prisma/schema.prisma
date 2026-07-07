@@ -217,6 +217,7 @@ model RepairJob {
   totalCost  Float @default(0)
 
   status RepairStatus @default(RECEIVED)
+  isDeleted Boolean @default(false)
 
   assignedUserId String? @db.ObjectId
   assignedUser   User?   @relation(fields: [assignedUserId], references: [id])

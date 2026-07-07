@@ -83,8 +83,8 @@ const RepairAddModal = ({
 
     onCreate(formData);
 
-    // resetForm();
-    // onClose();
+    resetForm();
+    onClose();
   };
 
   if (!isOpen) return null;
