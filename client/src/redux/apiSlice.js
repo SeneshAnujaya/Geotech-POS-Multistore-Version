@@ -370,6 +370,41 @@ const apiSlice = createApi({
       invalidatesTags: ["Repair"],
     }),
 
+    createRepairInvoice: builder.mutation({
+      query: ({ repairJobId, storeId, ...data }) => ({
+        url: `/repair/${repairJobId}/invoice?storeId=${storeId}`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Repair", "Payments", "Sales"],
+    }),
+
+    addRepairInvoicePayment: builder.mutation({
+      query: ({ repairInvoiceId, ...data }) => ({
+        url: `/repair/invoices/${repairInvoiceId}/payments`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Repair", "Payments", "Sales"],
+    }),
+
+    addRepairPart: builder.mutation({
+      query: ({ repairJobId, ...data }) => ({
+        url: `/repair/${repairJobId}/parts`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["Repair", "Stocks"],
+    }),
+
+    returnRepairPart: builder.mutation({
+      query: ({ repairJobId, repairPartId, storeId }) => ({
+        url: `/repair/${repairJobId}/parts/${repairPartId}?storeId=${storeId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Repair", "Stocks"],
+    }),
+
     deleteRepairJob: builder.mutation({
       query: ({ id, selectedStoreId }) => ({
         url: `/repair/${id}?storeId=${selectedStoreId}`,
@@ -427,6 +462,10 @@ export const {
   useFetchSingleRepairJobQuery,
   useUpdateRepairJobMutation,
   useUpdateRepairDetailsMutation,
+  useCreateRepairInvoiceMutation,
+  useAddRepairInvoicePaymentMutation,
+  useAddRepairPartMutation,
+  useReturnRepairPartMutation,
   useDeleteRepairJobMutation,
 } = apiSlice;
 export default apiSlice;

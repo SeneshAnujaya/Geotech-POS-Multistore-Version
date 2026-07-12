@@ -1,14 +1,9 @@
 import html2pdf from "html2pdf.js";
+import { formatDateTime } from "../dateUtil";
 
 const repairReceiptPDF = (repair) => {
-  console.log(repair);
-  
-  const currentDate = repair.createdAt
-    ? new Date(repair.createdAt)
-        .toISOString()
-        .split("T")[0]
-        .replace(/-/g, "/")
-    : new Date().toISOString().split("T")[0].replace(/-/g, "/");
+  const receiptDateValue = repair.repairCreatedAt || repair.createdAt || repair.receivedAt || repair.updatedAt;
+  const currentDate = formatDateTime(receiptDateValue);
 
   const element = document.createElement("div");
 

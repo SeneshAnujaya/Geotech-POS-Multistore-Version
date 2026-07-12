@@ -177,7 +177,6 @@ const RepairJobs = () => {
         "DIAGNOSING",
         "REPAIRING",
         "READY",
-        "COMPLETED",
         "CANCELLED",
       ],
       renderCell: (params) => {
@@ -226,17 +225,25 @@ const RepairJobs = () => {
     },
     {
       field: "col11",
-      headerName: "Invoice",
-      width: 90,
+      headerName: "Receipt",
+      width: 105,
       renderCell: (params) => (
         <div className="flex items-center h-full">
           <button
             variant="contained"
             color="primary"
-            className="bg-blue-800 flex rounded-full h-6 items-center px-3"
-            onClick={() => repairReceiptPDF(params.row.repair)}
+            title={params.row.repair.intakeReceipt ? "Print saved intake receipt" : "This is a legacy repair with no saved intake receipt"}
+            className="bg-blue-800 flex rounded-full h-6 items-center px-3 disabled:cursor-not-allowed disabled:opacity-40"
+            onClick={() =>
+              params.row.repair.intakeReceipt &&
+              repairReceiptPDF({
+                ...params.row.repair.intakeReceipt,
+                repairCreatedAt: params.row.repair.createdAt,
+              })
+            }
+            disabled={!params.row.repair.intakeReceipt}
           >
-            Invoice
+            Receipt
           </button>
         </div>
       ),
@@ -271,15 +278,11 @@ const RepairJobs = () => {
       }
       showSuccessToast("Repairjob is created successfully!");
 
-      repairReceiptPDF(response.repair);
-      refetch();
-      repairReceiptPDF(formData);
       repairReceiptPDF({
-        ...formData,
-        jobNumber: "TEST-001",
-        status: "RECEIVED",
-        createdAt: new Date(),
+        ...response.repair.intakeReceipt,
+        repairCreatedAt: response.repair.createdAt,
       });
+      refetch();
     } catch (error) {
       console.log(error);
 

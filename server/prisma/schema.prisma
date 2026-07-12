@@ -42,12 +42,14 @@ model Store {
   isDeleted Boolean     @default(false)
   status    StoreStatus @default(ACTIVE)
 
-  users      User[]
-  products   Product[]
-  sales      Sale[]
-  payments   Payment[]
-  Stock      Stock[]
-  RepairJobs RepairJob[]
+  users                User[]
+  products             Product[]
+  sales                Sale[]
+  payments             Payment[]
+  Stock                Stock[]
+  RepairJobs           RepairJob[]
+  repairIntakeReceipts RepairIntakeReceipt[]
+  repairInvoices       RepairInvoice[]
 }
 
 enum StoreStatus {
@@ -82,8 +84,9 @@ model Product {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  category  Category    @relation(fields: [categoryId], references: [categoryId])
-  SalesItem SalesItem[]
+  category   Category     @relation(fields: [categoryId], references: [categoryId])
+  SalesItem  SalesItem[]
+  RepairPart RepairPart[]
 
   storeId String? @db.ObjectId
   store   Store?  @relation(fields: [storeId], references: [storeId], onDelete: SetNull)
@@ -100,8 +103,9 @@ model Stock {
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
 
-  product Product @relation(fields: [productId], references: [productId])
-  store   Store   @relation(fields: [storeId], references: [storeId])
+  product    Product      @relation(fields: [productId], references: [productId])
+  store      Store        @relation(fields: [storeId], references: [storeId])
+  RepairPart RepairPart[]
 
   @@unique([productId, storeId])
 }
@@ -164,20 +168,23 @@ model BulkBuyer {
 }
 
 model Payment {
-  paymentId     String   @id @default(auto()) @map("_id") @db.ObjectId
-  saleId        String?  @db.ObjectId
-  bulkBuyerId   String?  @db.ObjectId
-  paymentAmount Float
-  paymentDate   DateTime @default(now())
-  paymentMethod String? // (e.g., "cash", "credit card", "bank transfer")
-  receiptNumber String?  @unique
-  storeId       String?  @db.ObjectId
+  paymentId       String   @id @default(auto()) @map("_id") @db.ObjectId
+  saleId          String?  @db.ObjectId
+  repairInvoiceId String?  @db.ObjectId
+  bulkBuyerId     String?  @db.ObjectId
+  paymentAmount   Float
+  paymentDate     DateTime @default(now())
+  paymentMethod   String? // (e.g., "cash", "credit card", "bank transfer")
+  receiptNumber   String?  @unique
+  storeId         String?  @db.ObjectId
 
-  sale      Sale?      @relation(fields: [saleId], references: [saleId])
-  bulkBuyer BulkBuyer? @relation(fields: [bulkBuyerId], references: [bulkBuyerId])
-  store     Store?     @relation(fields: [storeId], references: [storeId], onDelete: SetNull)
+  sale          Sale?          @relation(fields: [saleId], references: [saleId])
+  repairInvoice RepairInvoice? @relation(fields: [repairInvoiceId], references: [repairInvoiceId])
+  bulkBuyer     BulkBuyer?     @relation(fields: [bulkBuyerId], references: [bulkBuyerId])
+  store         Store?         @relation(fields: [storeId], references: [storeId], onDelete: SetNull)
 
   @@index([saleId, paymentDate]) // Index for quick lookups of payments by sale and date
+  @@index([repairInvoiceId, paymentDate])
 }
 
 enum RepairStatus {
@@ -216,8 +223,8 @@ model RepairJob {
   partsCost  Float @default(0)
   totalCost  Float @default(0)
 
-  status RepairStatus @default(RECEIVED)
-  isDeleted Boolean @default(false)
+  status    RepairStatus @default(RECEIVED)
+  isDeleted Boolean      @default(false)
 
   assignedUserId String? @db.ObjectId
   assignedUser   User?   @relation(fields: [assignedUserId], references: [id])
@@ -228,9 +235,138 @@ model RepairJob {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   completedAt DateTime?
+
+  intakeReceipt RepairIntakeReceipt?
+  repairInvoice RepairInvoice?
+  repairParts   RepairPart[]
+}
+
+// Immutable record of the device and its condition when the customer leaves it with us.
+model RepairIntakeReceipt {
+  repairIntakeReceiptId String @id @default(auto()) @map("_id") @db.ObjectId
+  receiptNumber         String @unique
+  repairJobId           String @unique @db.ObjectId
+  jobNumber             String
+
+  customerName  String
+  customerPhone String
+  deviceType    String
+  brand         String
+  model         String
+  serialNumber  String?
+
+  problemDescription String
+  receivedItems      String?
+  physicalCondition  String?
+
+  storeId   String   @db.ObjectId
+  createdAt DateTime @default(now())
+
+  repairJob RepairJob @relation(fields: [repairJobId], references: [repairJobId])
+  store     Store     @relation(fields: [storeId], references: [storeId])
+
+  @@index([storeId, createdAt])
+}
+
+enum RepairInvoiceStatus {
+  ISSUED
+  VOID
+}
+
+enum RepairPartStatus {
+  RESERVED
+  RETURNED
+  INVOICED
+}
+
+// A stock item assigned to a repair. It is deducted immediately and can be returned before invoicing.
+model RepairPart {
+  repairPartId String @id @default(auto()) @map("_id") @db.ObjectId
+  repairJobId  String @db.ObjectId
+  productId    String @db.ObjectId
+  stockId      String @db.ObjectId
+
+  productName String
+  sku         String
+  quantity    Int
+  unitPrice   Float
+  total       Float
+  status      RepairPartStatus @default(RESERVED)
+  createdAt   DateTime         @default(now())
+  returnedAt  DateTime?
+
+  repairJob RepairJob @relation(fields: [repairJobId], references: [repairJobId])
+  product   Product   @relation(fields: [productId], references: [productId])
+  stock     Stock     @relation(fields: [stockId], references: [id])
+
+  @@index([repairJobId, status])
+}
+
+// Immutable financial document created when a repair is handed over or charged.
+model RepairInvoice {
+  repairInvoiceId String @id @default(auto()) @map("_id") @db.ObjectId
+  invoiceNumber   String @unique
+  repairJobId     String @unique @db.ObjectId
+
+  customerName  String
+  customerPhone String
+  deviceType    String
+  brand         String
+  model         String
+  serialNumber  String?
+  diagnosis     String?
+
+  labourCost    Float               @default(0)
+  partsCost     Float               @default(0)
+  discount      Float               @default(0)
+  totalAmount   Float
+  paidAmount    Float               @default(0)
+  paymentStatus String              @default("UNPAID")
+  status        RepairInvoiceStatus @default(ISSUED)
+
+  storeId   String    @db.ObjectId
+  issuedAt  DateTime  @default(now())
+  voidedAt  DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  repairJob RepairJob           @relation(fields: [repairJobId], references: [repairJobId])
+  store     Store               @relation(fields: [storeId], references: [storeId])
+  payments  Payment[]
+  parts     RepairInvoicePart[]
+
+  @@index([storeId, issuedAt])
+  @@index([storeId, paymentStatus])
+}
+
+// Immutable snapshot of every stock part charged on a repair invoice.
+model RepairInvoicePart {
+  repairInvoicePartId String @id @default(auto()) @map("_id") @db.ObjectId
+  repairInvoiceId     String @db.ObjectId
+  productId           String @db.ObjectId
+  productName         String
+  sku                 String
+  quantity            Int
+  unitPrice           Float
+  total               Float
+
+  repairInvoice RepairInvoice @relation(fields: [repairInvoiceId], references: [repairInvoiceId])
+
+  @@index([repairInvoiceId])
 }
 
 model SystemSettings {
   id              String  @id @default(auto()) @map("_id") @db.ObjectId
   isSetupComplete Boolean @default(false)
+}
+
+// Atomic per-store sequences for customer-facing repair document numbers.
+model DocumentCounter {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  documentType String
+  storeId      String   @db.ObjectId
+  sequence     Int      @default(0)
+  updatedAt    DateTime @updatedAt
+
+  @@unique([documentType])
 }

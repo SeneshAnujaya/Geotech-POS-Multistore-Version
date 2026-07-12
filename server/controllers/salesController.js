@@ -283,11 +283,7 @@ export const getTotalRevenue = async (req, res) => {
     }, 0);
 
     const laterPayments = await prisma.payment.findMany({
-      where: {
-        sale: {
-          storeId,
-        },
-      },
+      where: { storeId },
       select: {
         paymentAmount: true,
       },

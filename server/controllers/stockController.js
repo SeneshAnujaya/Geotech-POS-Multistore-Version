@@ -55,6 +55,7 @@ export const getStocks = async (req, res) => {
             productId: true,
             name: true,
             sku: true,
+            retailPrice: true,
           },
         },
         store: {
