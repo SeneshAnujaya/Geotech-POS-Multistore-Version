@@ -82,6 +82,42 @@ const findRepairInStore = async (repairJobId, storeId, include = {}) => {
   return repair;
 };
 
+const releaseReservedRepairParts = async (tx, repairJobId, storeId, labourCost) => {
+  const reservedParts = await tx.repairPart.findMany({
+    where: { repairJobId, status: "RESERVED" },
+  });
+
+  if (!reservedParts.length) {
+    return { releasedTotal: 0, newPartsCost: 0, newTotalCost: Number(labourCost) };
+  }
+
+  const stockAdjustments = reservedParts.reduce((map, part) => {
+    const current = map.get(part.stockId) || { quantity: 0 };
+    current.quantity += part.quantity;
+    map.set(part.stockId, current);
+    return map;
+  }, new Map());
+
+  for (const [stockId, adjustment] of stockAdjustments.entries()) {
+    const stock = await tx.stock.findFirst({
+      where: { id: stockId, storeId, isDeleted: false },
+    });
+    if (!stock) throw new Error("The original stock record no longer exists");
+
+    await tx.stock.update({
+      where: { id: stockId },
+      data: { quantity: { increment: adjustment.quantity } },
+    });
+  }
+
+  await tx.repairPart.updateMany({
+    where: { repairPartId: { in: reservedParts.map((part) => part.repairPartId) } },
+    data: { status: "RETURNED", returnedAt: new Date() },
+  });
+
+  return { releasedTotal: reservedParts.reduce((sum, part) => sum + Number(part.total), 0), newPartsCost: 0, newTotalCost: Number(labourCost) };
+};
+
 export const addRepair = async (req, res) => {
   const {
     customerName, customerPhone, deviceType, brand, model, serialNumber,
@@ -205,20 +241,35 @@ export const updateRepairFromTable = async (req, res) => {
     await validateStoreIsActive(storeId);
     const repair = await findRepairInStore(repairJobId, storeId, { repairInvoice: true });
     if (repair.repairInvoice) return res.status(409).json({ success: false, message: "An invoiced repair cannot be edited" });
+    if (repair.status === "CANCELLED") return res.status(409).json({ success: false, message: "A cancelled repair cannot be reopened or edited" });
     if (status === "COMPLETED") return res.status(400).json({ success: false, message: "Create the repair invoice to complete this job" });
 
-    const updatedRepair = await prisma.repairJob.update({
-      where: { repairJobId },
-      data: {
-        customerName: customerName ?? repair.customerName,
-        customerPhone: customerPhone ?? repair.customerPhone,
-        deviceType: deviceType ?? repair.deviceType,
-        model: model ?? repair.model,
-        serialNumber: serialNumber ?? repair.serialNumber,
-        technician: technician ?? repair.technician,
-        status: status ?? repair.status,
-        estimatedCost: estimatedCost !== undefined && estimatedCost !== "" ? Number(estimatedCost) : repair.estimatedCost,
-      },
+    const nextStatus = status ?? repair.status;
+    const updatedRepair = await prisma.$transaction(async (tx) => {
+      let partsCost = Number(repair.partsCost);
+      let totalCost = Number(repair.totalCost);
+
+      if (nextStatus === "CANCELLED" && repair.status !== "CANCELLED") {
+        const release = await releaseReservedRepairParts(tx, repairJobId, storeId, repair.labourCost);
+        partsCost = release.newPartsCost;
+        totalCost = release.newTotalCost;
+      }
+
+      return tx.repairJob.update({
+        where: { repairJobId },
+        data: {
+          customerName: customerName ?? repair.customerName,
+          customerPhone: customerPhone ?? repair.customerPhone,
+          deviceType: deviceType ?? repair.deviceType,
+          model: model ?? repair.model,
+          serialNumber: serialNumber ?? repair.serialNumber,
+          technician: technician ?? repair.technician,
+          status: nextStatus,
+          estimatedCost: estimatedCost !== undefined && estimatedCost !== "" ? Number(estimatedCost) : repair.estimatedCost,
+          partsCost,
+          totalCost,
+        },
+      });
     });
     return res.status(200).json({ success: true, message: "Repair updated successfully", repair: updatedRepair });
   } catch (error) {
@@ -233,26 +284,36 @@ export const updateRepairDetailsPage = async (req, res) => {
     await validateStoreIsActive(storeId);
     const repair = await findRepairInStore(repairJobId, storeId, { repairInvoice: true });
     if (repair.repairInvoice) return res.status(409).json({ success: false, message: "An invoiced repair cannot be edited" });
+    if (repair.status === "CANCELLED") return res.status(409).json({ success: false, message: "A cancelled repair cannot be reopened or edited" });
     if (req.body.status === "COMPLETED") return res.status(400).json({ success: false, message: "Create the repair invoice to complete this job" });
 
     const labourCost = Number(req.body.labourCost || 0);
-    const partsCost = repair.partsCost;
-    const updatedRepair = await prisma.repairJob.update({
-      where: { repairJobId },
-      data: {
-        technician: req.body.technician || null,
-        status: req.body.status || repair.status,
-        expectedDeliveryDate: req.body.expectedDeliveryDate ? new Date(req.body.expectedDeliveryDate) : null,
-        diagnosis: req.body.diagnosis || null,
-        receivedItems: req.body.receivedItems || null,
-        physicalCondition: req.body.physicalCondition || null,
-        problemDescription: req.body.problemDescription || repair.problemDescription,
-        initialInspectionNotes: req.body.initialInspectionNotes || null,
-        estimatedCost: Number(req.body.estimatedCost || 0),
-        labourCost,
-        partsCost,
-        totalCost: labourCost + partsCost,
-      },
+    const nextStatus = req.body.status || repair.status;
+    const updatedRepair = await prisma.$transaction(async (tx) => {
+      let partsCost = Number(repair.partsCost);
+
+      if (nextStatus === "CANCELLED" && repair.status !== "CANCELLED") {
+        const release = await releaseReservedRepairParts(tx, repairJobId, storeId, labourCost);
+        partsCost = release.newPartsCost;
+      }
+
+      return tx.repairJob.update({
+        where: { repairJobId },
+        data: {
+          technician: req.body.technician || null,
+          status: nextStatus,
+          expectedDeliveryDate: req.body.expectedDeliveryDate ? new Date(req.body.expectedDeliveryDate) : null,
+          diagnosis: req.body.diagnosis || null,
+          receivedItems: req.body.receivedItems || null,
+          physicalCondition: req.body.physicalCondition || null,
+          problemDescription: req.body.problemDescription || repair.problemDescription,
+          initialInspectionNotes: req.body.initialInspectionNotes || null,
+          estimatedCost: Number(req.body.estimatedCost || 0),
+          labourCost,
+          partsCost,
+          totalCost: labourCost + partsCost,
+        },
+      });
     });
     return res.status(200).json({ success: true, repair: updatedRepair, message: "Repair details updated successfully" });
   } catch (error) {
@@ -431,7 +492,10 @@ export const deleteRepair = async (req, res) => {
     await validateStoreIsActive(req.query.storeId);
     const repair = await findRepairInStore(repairJobId, req.query.storeId, { repairInvoice: true });
     if (repair.repairInvoice) return res.status(409).json({ success: false, message: "An invoiced repair cannot be deleted" });
-    await prisma.repairJob.update({ where: { repairJobId }, data: { isDeleted: true } });
+    await prisma.$transaction(async (tx) => {
+      await releaseReservedRepairParts(tx, repairJobId, req.query.storeId, repair.labourCost);
+      await tx.repairJob.update({ where: { repairJobId }, data: { isDeleted: true, partsCost: 0, totalCost: Number(repair.labourCost) } });
+    });
     return res.status(200).json({ success: true, message: "Repair job deleted successfully" });
   } catch (error) {
     return res.status(error.statusCode || 500).json({ success: false, message: error.message || "Error deleting repair job" });

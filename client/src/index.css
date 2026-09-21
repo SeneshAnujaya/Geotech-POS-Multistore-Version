@@ -7,6 +7,11 @@
     font-family: "Inter", sans-serif;
 }
 
+
+html, body {
+    background-color: #080f21;
+}
+
 .MuiDataGrid-row--borderBottom {
     background-color: transparent !important;
 }

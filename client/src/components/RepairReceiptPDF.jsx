@@ -151,9 +151,8 @@ const repairReceiptPDF = (repair) => {
   <div style="
     min-height:30px;
     margin-bottom:10px;
-    color:#000
-    border: 1px solid red;
-    font-size: 13px
+    color:#000;
+    font-size: 13px;
   ">
     ${repair.problemDescription || "-"}
   </div>

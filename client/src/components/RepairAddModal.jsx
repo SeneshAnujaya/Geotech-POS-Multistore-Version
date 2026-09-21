@@ -302,7 +302,6 @@ const RepairAddModal = ({
               rows={5}
               placeholder="Received Items..."
               className={inputStyle}
-              required
             />
           </div>
 
@@ -319,7 +318,6 @@ const RepairAddModal = ({
               rows={5}
               placeholder="Physical Condition..."
               className={inputStyle}
-              required
             />
           </div>
 

@@ -16,7 +16,7 @@ import {
 const router = express.Router();
 
 router.post("/add", verifyToken, addRepair);
-router.get("/", getRepairs);
+router.get("/", verifyToken, getRepairs);
 router.post("/:repairJobId/invoice", verifyToken, createRepairInvoice);
 router.post("/invoices/:repairInvoiceId/payments", verifyToken, addRepairInvoicePayment);
 router.post("/:repairJobId/parts", verifyToken, addRepairPart);

@@ -72,7 +72,7 @@ const RepairDetails = () => {
   const repair = data?.repair;
 
   useEffect(() => {
-    if (!formData && repair) {
+    if (repair) {
       setFormData(repair);
     }
   }, [repair]);
@@ -208,6 +208,7 @@ const RepairDetails = () => {
   const canChangeParts =
     !repair.repairInvoice &&
     !["COMPLETED", "CANCELLED"].includes(repair.status);
+  const isCancelled = repair.status === "CANCELLED";
   const availableStocks =
     stockData?.data?.filter((stock) => stock.quantity > 0) || [];
 
@@ -253,7 +254,8 @@ const RepairDetails = () => {
               </button> */}
               <button
                 onClick={handleSave}
-                disabled={isSaving}
+                disabled={isSaving || isCancelled}
+                title={isCancelled ? "A cancelled repair cannot be reopened or edited" : undefined}
                 className="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm hover:bg-green-700 disabled:opacity-60"
               >
                 <Save size={16} />
@@ -349,7 +351,9 @@ const RepairDetails = () => {
                 name="status"
                 value={formData?.status}
                 onChange={handleChange}
-                className={inputStyle}
+                disabled={isCancelled}
+                title={isCancelled ? "A cancelled repair cannot be reopened" : undefined}
+                className={`${inputStyle} disabled:cursor-not-allowed disabled:opacity-60`}
               >
                 <option>RECEIVED</option>
                 <option>DIAGNOSING</option>
@@ -357,6 +361,11 @@ const RepairDetails = () => {
                 <option>READY</option>
                 <option>CANCELLED</option>
               </select>
+              {isCancelled && (
+                <p className="mt-1 text-xs text-red-400">
+                  This repair is cancelled and locked. It cannot be reopened or edited.
+                </p>
+              )}
             </div>
 
             {/* <Item
